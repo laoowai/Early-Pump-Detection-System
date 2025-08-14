@@ -1,209 +1,350 @@
 #!/usr/bin/env python3
 """
-Simple validation script for Early Pump Detection System
-Tests basic functionality without requiring all dependencies
+Professional Pattern Analyzer - Setup Validation
+Validates system setup and identifies potential issues
 """
 
 import sys
-import os
+import ast
 from pathlib import Path
+from typing import List, Tuple, Dict, Any
+import importlib.util
 
-def test_project_structure():
-    """Test that all required files and directories exist"""
-    print("🔍 Testing project structure...")
+def test_project_structure() -> Tuple[bool, List[str]]:
+    """Test if all required project files exist"""
+    issues = []
     
     required_files = [
         "main.py",
-        "README.md", 
-        "requirements.txt",
-        "CONTRIBUTING.md",
-        "CHANGELOG.md",
-        ".gitignore"
-    ]
-    
-    required_dirs = [
-        "pattern_analyzers",
-        "pattern_detectors", 
-        "stage_analyzers",
-        "docs",
-        "tests",
-        "examples"
+        "pattern_analyzers/__init__.py",
+        "pattern_analyzers/base_pattern_analyzer.py", 
+        "pattern_analyzers/professional_pattern_analyzer.py",
+        "pattern_detectors/__init__.py",
+        "pattern_detectors/base_detector.py",
+        "pattern_detectors/advanced_pattern_detector.py",
+        "stage_analyzers/__init__.py",
+        "stage_analyzers/base_stage_analyzer.py",
+        "stage_analyzers/enhanced_stage_analyzer.py",
+        "timeframe_analyzers/__init__.py",
+        "timeframe_analyzers/base_timeframe_analyzer.py",
+        "timeframe_analyzers/enhanced_multi_timeframe_analyzer.py"
     ]
     
     missing_files = []
-    missing_dirs = []
-    
-    # Check files
-    for file in required_files:
-        if not Path(file).exists():
-            missing_files.append(file)
-    
-    # Check directories
-    for dir in required_dirs:
-        if not Path(dir).exists():
-            missing_dirs.append(dir)
+    for file_path in required_files:
+        if not Path(file_path).exists():
+            missing_files.append(file_path)
     
     if missing_files:
-        print(f"❌ Missing files: {missing_files}")
-        return False
+        issues.append(f"Missing required files: {', '.join(missing_files)}")
     
-    if missing_dirs:
-        print(f"❌ Missing directories: {missing_dirs}")
-        return False
-    
-    print("✅ Project structure is complete")
-    return True
-
-def test_documentation():
-    """Test that documentation files exist and have content"""
-    print("📚 Testing documentation...")
-    
-    doc_files = [
-        "docs/installation.md",
-        "docs/user-guide.md", 
-        "docs/architecture.md",
-        "docs/api-reference.md"
-    ]
-    
-    for doc_file in doc_files:
-        if not Path(doc_file).exists():
-            print(f"❌ Missing documentation: {doc_file}")
-            return False
-        
-        # Check file has reasonable content
-        with open(doc_file, 'r') as f:
-            content = f.read()
-            if len(content) < 1000:  # Minimum content length
-                print(f"❌ Documentation too short: {doc_file}")
-                return False
-    
-    print("✅ Documentation is complete")
-    return True
-
-def test_python_syntax():
-    """Test that Python files have valid syntax"""
-    print("🐍 Testing Python syntax...")
-    
-    python_files = [
-        "main.py",
-        "pattern_analyzers/__init__.py",
-        "pattern_detectors/__init__.py",
-        "stage_analyzers/__init__.py",
-        "tests/test_system.py"
-    ]
-    
-    for py_file in python_files:
-        if not Path(py_file).exists():
-            print(f"❌ Missing Python file: {py_file}")
-            return False
-        
-        try:
-            with open(py_file, 'r') as f:
-                code = f.read()
-                compile(code, py_file, 'exec')
-        except SyntaxError as e:
-            print(f"❌ Syntax error in {py_file}: {e}")
-            return False
-        except Exception as e:
-            print(f"⚠️  Warning in {py_file}: {e}")
-    
-    print("✅ Python syntax is valid")
-    return True
-
-def test_requirements():
-    """Test that requirements.txt exists and has content"""
-    print("📦 Testing requirements...")
-    
-    req_file = Path("requirements.txt")
-    if not req_file.exists():
-        print("❌ requirements.txt missing")
-        return False
-    
-    with open(req_file, 'r') as f:
-        content = f.read()
-        
-    # Check for essential packages
-    essential_packages = ['pandas', 'numpy', 'scipy', 'scikit-learn', 'ta']
-    
-    for package in essential_packages:
-        if package not in content:
-            print(f"❌ Missing essential package: {package}")
-            return False
-    
-    print("✅ Requirements file is complete")
-    return True
-
-def test_readme_content():
-    """Test that README has comprehensive content"""
-    print("📄 Testing README content...")
-    
-    with open("README.md", 'r') as f:
-        readme_content = f.read()
-    
-    # Check for essential sections
-    essential_sections = [
-        "# 🚀 Early Pump Detection System",
-        "## 🌟 Key Features", 
-        "## 🛠 Installation",
-        "## 🚀 Quick Start",
-        "## 📊 System Architecture",
+    # Check optional files
+    optional_files = [
+        "demo.py",
+        "validate_setup.py",
+        "README.md",
         "requirements.txt"
     ]
     
-    for section in essential_sections:
-        if section not in readme_content:
-            print(f"❌ Missing README section: {section}")
-            return False
+    missing_optional = []
+    for file_path in optional_files:
+        if not Path(file_path).exists():
+            missing_optional.append(file_path)
     
-    # Check minimum length
-    if len(readme_content) < 5000:
-        print("❌ README content too short")
-        return False
+    if missing_optional:
+        issues.append(f"Missing optional files: {', '.join(missing_optional)}")
     
-    print("✅ README content is comprehensive")
-    return True
+    return len(missing_files) == 0, issues
 
-def run_validation():
+def test_data_directory_structure() -> Tuple[bool, List[str]]:
+    """Test data directory structure"""
+    issues = []
+    
+    base_data_dir = Path("Chinese_Market/data")
+    
+    if not base_data_dir.exists():
+        issues.append(f"Data directory not found: {base_data_dir}")
+        return False, issues
+    
+    expected_subdirs = [
+        "shanghai_6xx",
+        "shenzhen_0xx", 
+        "beijing_8xx",
+        "huobi/spot_usdt/1d"
+    ]
+    
+    missing_dirs = []
+    empty_dirs = []
+    
+    for subdir in expected_subdirs:
+        full_path = base_data_dir / subdir
+        if not full_path.exists():
+            missing_dirs.append(subdir)
+        else:
+            csv_files = list(full_path.glob("*.csv"))
+            if not csv_files:
+                empty_dirs.append(subdir)
+    
+    if missing_dirs:
+        issues.append(f"Missing data directories: {', '.join(missing_dirs)}")
+    
+    if empty_dirs:
+        issues.append(f"Empty data directories (no CSV files): {', '.join(empty_dirs)}")
+    
+    # Check for sample data
+    total_files = 0
+    for subdir in expected_subdirs:
+        full_path = base_data_dir / subdir
+        if full_path.exists():
+            csv_files = list(full_path.glob("*.csv"))
+            total_files += len(csv_files)
+    
+    if total_files == 0:
+        issues.append("No CSV data files found in any directory")
+    elif total_files < 10:
+        issues.append(f"Very few data files found ({total_files}). Consider adding more data for better analysis.")
+    
+    return len(missing_dirs) == 0 and total_files > 0, issues
+
+def test_python_syntax() -> Tuple[bool, List[str]]:
+    """Test Python syntax of all Python files"""
+    issues = []
+    
+    python_files = [
+        "main.py",
+        "pattern_analyzers/base_pattern_analyzer.py",
+        "pattern_analyzers/professional_pattern_analyzer.py",
+        "pattern_detectors/base_detector.py", 
+        "pattern_detectors/advanced_pattern_detector.py",
+        "stage_analyzers/base_stage_analyzer.py",
+        "stage_analyzers/enhanced_stage_analyzer.py",
+        "timeframe_analyzers/base_timeframe_analyzer.py",
+        "timeframe_analyzers/enhanced_multi_timeframe_analyzer.py"
+    ]
+    
+    syntax_errors = []
+    
+    for file_path in python_files:
+        if Path(file_path).exists():
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                ast.parse(content)
+            except SyntaxError as e:
+                syntax_errors.append(f"{file_path}: Line {e.lineno} - {e.msg}")
+            except Exception as e:
+                syntax_errors.append(f"{file_path}: {str(e)}")
+    
+    if syntax_errors:
+        issues.extend(syntax_errors)
+    
+    return len(syntax_errors) == 0, issues
+
+def test_imports() -> Tuple[bool, List[str]]:
+    """Test if required imports work"""
+    issues = []
+    
+    required_packages = [
+        ("pandas", "pd"),
+        ("numpy", "np"),
+        ("pathlib", "Path"),
+        ("datetime", "datetime"),
+        ("concurrent.futures", "ThreadPoolExecutor"),
+        ("scipy.stats", "linregress"),
+        ("collections", "defaultdict")
+    ]
+    
+    import_errors = []
+    
+    for package, alias in required_packages:
+        try:
+            if "." in package:
+                module_name, attr_name = package.rsplit(".", 1)
+                module = importlib.import_module(module_name)
+                getattr(module, attr_name)
+            else:
+                importlib.import_module(package)
+        except ImportError:
+            import_errors.append(package)
+        except Exception as e:
+            import_errors.append(f"{package}: {str(e)}")
+    
+    if import_errors:
+        issues.append(f"Import errors: {', '.join(import_errors)}")
+    
+    return len(import_errors) == 0, issues
+
+def test_data_format() -> Tuple[bool, List[str]]:
+    """Test data file format"""
+    issues = []
+    
+    base_data_dir = Path("Chinese_Market/data")
+    
+    if not base_data_dir.exists():
+        return False, ["Data directory not found"]
+    
+    # Find sample files
+    sample_files = []
+    for subdir in ["shanghai_6xx", "shenzhen_0xx", "huobi/spot_usdt/1d"]:
+        subdir_path = base_data_dir / subdir
+        if subdir_path.exists():
+            csv_files = list(subdir_path.glob("*.csv"))
+            if csv_files:
+                sample_files.append(csv_files[0])
+    
+    if not sample_files:
+        return False, ["No CSV files found to validate format"]
+    
+    format_issues = []
+    
+    for file_path in sample_files[:3]:  # Check first 3 files
+        try:
+            import pandas as pd
+            df = pd.read_csv(file_path)
+            
+            required_columns = ['Open', 'High', 'Low', 'Close']
+            missing_columns = [col for col in required_columns if col not in df.columns]
+            
+            if missing_columns:
+                format_issues.append(f"{file_path.name}: Missing columns {missing_columns}")
+            
+            if len(df) < 30:
+                format_issues.append(f"{file_path.name}: Too few rows ({len(df)}), need at least 30")
+            
+            # Check for valid data
+            for col in required_columns:
+                if col in df.columns:
+                    if df[col].isnull().any():
+                        format_issues.append(f"{file_path.name}: Column {col} has null values")
+                    if (df[col] <= 0).any():
+                        format_issues.append(f"{file_path.name}: Column {col} has non-positive values")
+        
+        except Exception as e:
+            format_issues.append(f"{file_path.name}: Error reading file - {str(e)}")
+    
+    if format_issues:
+        issues.extend(format_issues)
+    
+    return len(format_issues) == 0, issues
+
+def test_system_resources() -> Tuple[bool, List[str]]:
+    """Test system resources"""
+    issues = []
+    warnings = []
+    
+    import platform
+    import psutil if 'psutil' in sys.modules else None
+    
+    # Python version
+    python_version = sys.version_info
+    if python_version < (3, 8):
+        issues.append(f"Python version {python_version.major}.{python_version.minor} is too old. Need 3.8+")
+    elif python_version < (3, 9):
+        warnings.append(f"Python {python_version.major}.{python_version.minor} works but 3.9+ recommended")
+    
+    # Memory check (if psutil available)
+    try:
+        import psutil
+        memory = psutil.virtual_memory()
+        if memory.total < 4 * 1024**3:  # 4GB
+            warnings.append(f"Low memory: {memory.total // (1024**3)}GB, recommend 8GB+")
+    except ImportError:
+        warnings.append("psutil not available - cannot check memory")
+    
+    # CPU cores
+    import multiprocessing
+    cpu_count = multiprocessing.cpu_count()
+    if cpu_count < 2:
+        warnings.append(f"Only {cpu_count} CPU core detected, recommend 4+")
+    elif cpu_count < 4:
+        warnings.append(f"{cpu_count} CPU cores detected, 4+ recommended for better performance")
+    
+    # Platform optimization
+    if platform.system() == 'Darwin' and platform.machine() == 'arm64':
+        warnings.append("M1/M2 Mac detected - system is optimized for your hardware!")
+    
+    if warnings:
+        issues.extend([f"Warning: {w}" for w in warnings])
+    
+    return len([i for i in issues if not i.startswith("Warning:")]) == 0, issues
+
+def run_validation() -> Dict[str, Any]:
     """Run all validation tests"""
-    print("🧪 Early Pump Detection System - Validation")
+    results = {}
+    
+    print("ðŸ§ª PROFESSIONAL PATTERN ANALYZER - SETUP VALIDATION")
     print("=" * 60)
     
     tests = [
-        test_project_structure,
-        test_documentation,
-        test_python_syntax,
-        test_requirements,
-        test_readme_content
+        ("Project Structure", test_project_structure),
+        ("Data Directory", test_data_directory_structure),
+        ("Python Syntax", test_python_syntax),
+        ("Import Dependencies", test_imports),
+        ("Data Format", test_data_format),
+        ("System Resources", test_system_resources)
     ]
     
-    results = []
-    for test in tests:
+    all_passed = True
+    
+    for test_name, test_func in tests:
+        print(f"\nðŸ"§ Testing {test_name}...")
         try:
-            result = test()
-            results.append(result)
+            passed, issues = test_func()
+            results[test_name] = {"passed": passed, "issues": issues}
+            
+            if passed:
+                print(f"   âœ… {test_name}: PASSED")
+            else:
+                print(f"   âŒ {test_name}: FAILED")
+                all_passed = False
+            
+            for issue in issues:
+                if issue.startswith("Warning:"):
+                    print(f"   âš ï¸  {issue}")
+                else:
+                    print(f"   â€¢ {issue}")
+        
         except Exception as e:
-            print(f"❌ Test failed with error: {e}")
-            results.append(False)
-        print()
+            print(f"   âŒ {test_name}: ERROR - {str(e)}")
+            results[test_name] = {"passed": False, "issues": [str(e)]}
+            all_passed = False
     
-    # Summary
-    passed = sum(results)
-    total = len(results)
-    
-    print("=" * 60)
-    print(f"📊 Validation Summary: {passed}/{total} tests passed")
-    
-    if passed == total:
-        print("🎉 All validation tests passed! Project setup is complete.")
-        print("\n🚀 Next steps:")
-        print("1. Install dependencies: pip install -r requirements.txt")
-        print("2. Read the documentation in docs/")
-        print("3. Try the quick start: python main.py (option 4 for quick test)")
-        return True
+    print("\n" + "=" * 60)
+    if all_passed:
+        print("ðŸŽ‰ ALL TESTS PASSED! System is ready for analysis.")
+        print("ðŸš€ Run 'python main.py' to start pattern analysis.")
     else:
-        print("❌ Some validation tests failed. Check the output above.")
-        return False
+        print("âš ï¸  SOME TESTS FAILED. Please fix issues before running analysis.")
+        print("ðŸ'¡ Check the issues listed above and run validation again.")
+    
+    print("\nðŸ"§ Quick fixes:")
+    print("   â€¢ Missing files: Re-download project files")
+    print("   â€¢ Missing data: Create Chinese_Market/data/ and add CSV files") 
+    print("   â€¢ Import errors: pip install pandas numpy scipy scikit-learn")
+    print("   â€¢ Format errors: Ensure CSV files have Open,High,Low,Close columns")
+    
+    return results
+
+def main():
+    """Main validation function"""
+    try:
+        results = run_validation()
+        
+        # Save results if possible
+        try:
+            import json
+            with open("validation_results.json", "w") as f:
+                json.dump(results, f, indent=2)
+            print(f"\nðŸ'¾ Validation results saved to validation_results.json")
+        except Exception:
+            pass
+    
+    except KeyboardInterrupt:
+        print("\n\nâ¸ï¸  Validation interrupted by user")
+    except Exception as e:
+        print(f"\n\nâŒ Validation error: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
-    success = run_validation()
-    sys.exit(0 if success else 1)
+    main()
