@@ -207,16 +207,42 @@ Early-Pump-Detection-System/
 - **`tests/`**: Testing infrastructure for system validation (`test_system.py`)
 
 ### Market Data Structure
+
+#### Directory Structure (Current Implementation)
 ```
 Chinese_Market/data/
-├── shanghai_6xx/     # Shanghai Stock Exchange (6xx codes)
-├── shenzhen_0xx/     # Shenzhen Stock Exchange (0xx codes)
-├── beijing_8xx/      # Beijing Stock Exchange (8xx codes)
-└── crypto/
-    ├── huobi/
-    ├── binance/
-    └── spot/
+├── shanghai_6xx/          # Shanghai Stock Exchange (6xx codes)
+│   └── 600000.csv         # Example: 浦发银行 (SPDB)
+├── shenzhen_0xx/          # Shenzhen Stock Exchange (0xx codes)  
+│   └── 000001.csv         # Example: 平安银行 (Ping An Bank)
+└── huobi/                 # Cryptocurrency data
+    └── spot_usdt/1d/      # Daily USDT trading pairs
+        └── XEN-USDT.csv   # Example: XEN token daily data
 ```
+
+#### CSV File Formats
+
+**Chinese Stocks Format** (Shanghai & Shenzhen):
+```csv
+Date,Close,Low,Volume,振幅,Open,股票代码,High,股票名称
+1999-11-10,-1.3300,-1.4400,1740850,-10.4500,-1.0600,600000,-1.0200,浦发银行
+```
+- **Columns**: Date, Close, Low, Volume, 振幅(Amplitude), Open, 股票代码(Stock Code), High, 股票名称(Stock Name)
+- **Date Format**: YYYY-MM-DD
+- **Chinese Headers**: Mixed Chinese/English column names
+- **Price Values**: May include negative values (adjusted prices)
+
+**Cryptocurrency Format** (Huobi):
+```csv
+timestamp,open,high,low,close,volume,volume_quote,symbol,price_change
+2024-08-07,8e-08,8.1e-08,7.7e-08,7.7e-08,4830221976723.218,380291.87812148104,XEN-USDT,-4.9383
+```
+- **Columns**: timestamp, open, high, low, close, volume, volume_quote, symbol, price_change
+- **Timestamp Format**: YYYY-MM-DD
+- **Scientific Notation**: Prices in scientific notation for small values
+- **Additional Data**: Includes volume_quote and price_change metrics
+
+> **Note**: File structures may vary across different data sources and timeframes. This documentation serves as a reference for current implementation and maintenance purposes. Additional exchanges (beijing_8xx, binance) may be added with different formats.
 
 ## 📊 System Architecture
 

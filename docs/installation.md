@@ -94,35 +94,33 @@ pip install cython>=0.29.0  # C extensions
 
 ## Data Directory Setup
 
-### Required Directory Structure
+### Required Directory Structure (Current Implementation)
 ```
 Chinese_Market/data/
 ├── shanghai_6xx/          # Shanghai Stock Exchange
-│   ├── 600000.csv
-│   ├── 600001.csv
-│   └── ...
+│   └── 600000.csv         # Example: 浦发银行 (SPDB)
 ├── shenzhen_0xx/          # Shenzhen Stock Exchange  
-│   ├── 000001.csv
-│   ├── 000002.csv
-│   └── ...
-├── beijing_8xx/           # Beijing Stock Exchange
-│   ├── 800001.csv
-│   └── ...
-└── crypto/                # Cryptocurrency data
-    ├── huobi/
-    │   └── spot_usdt/1d/
-    ├── binance/spot/
-    └── csv/
+│   └── 000001.csv         # Example: 平安银行 (Ping An Bank)
+└── huobi/                 # Cryptocurrency data
+    └── spot_usdt/1d/      # Daily USDT trading pairs
+        └── XEN-USDT.csv   # Example: XEN token
 ```
 
-### CSV File Format
-Each CSV file should contain OHLCV data:
+### CSV File Formats
+
+**Chinese Stocks** (Shanghai & Shenzhen):
 ```csv
-Date,Open,High,Low,Close,Volume
-2023-01-01,100.0,105.0,98.0,103.0,1000000
-2023-01-02,103.0,107.0,101.0,106.0,1200000
-...
+Date,Close,Low,Volume,振幅,Open,股票代码,High,股票名称
+1999-11-10,-1.3300,-1.4400,1740850,-10.4500,-1.0600,600000,-1.0200,浦发银行
 ```
+
+**Cryptocurrency** (Huobi):
+```csv
+timestamp,open,high,low,close,volume,volume_quote,symbol,price_change
+2024-08-07,8e-08,8.1e-08,7.7e-08,7.7e-08,4830221976723.218,380291.87812148104,XEN-USDT,-4.9383
+```
+
+> **Note**: The actual CSV formats may differ from standard OHLCV format. Chinese stock data includes additional columns in Chinese, while crypto data includes volume_quote and price_change fields.
 
 ## Platform-Specific Installation
 
