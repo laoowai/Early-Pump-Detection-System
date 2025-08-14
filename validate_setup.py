@@ -43,7 +43,11 @@ def test_project_structure() -> Tuple[bool, List[str]]:
         "demo.py",
         "validate_setup.py",
         "README.md",
-        "requirements.txt"
+        "requirements.txt",
+        "EPDScanner.py",
+        "EPDStocksUpdater.py", 
+        "EPDHuobiUpdater.py",
+        "htx_config.json"
     ]
     
     missing_optional = []

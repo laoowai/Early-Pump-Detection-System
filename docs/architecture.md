@@ -549,6 +549,91 @@ class PerformanceTracker:
 - **Data Partitioning**: Efficient symbol batching
 - **Caching**: Intelligent caching of intermediate results
 
+## 📡 Data Collection Architecture
+
+### EPD Data Collection Tools
+
+The system includes specialized data collection tools for comprehensive market data management:
+
+#### EPDScanner.py - Pattern Analyzer Game v6.0
+```python
+class ProfessionalTradingOrchestrator:
+    """Enhanced pattern analysis orchestrator"""
+    def __init__(self):
+        self.component_registry = ComponentRegistry()
+        self.pattern_detector = AdvancedPatternDetector()
+        self.stage_analyzer = EnhancedStageAnalyzer()
+        self.learning_system = ProfessionalLearningSystem()
+        self.blacklist_manager = EnhancedBlacklistManager()
+```
+
+**Key Features**:
+- 20+ advanced pattern detection algorithms
+- Auto-discovery component architecture
+- M1/M2 MacBook performance optimization
+- Professional grading system (Institutional/Professional/Intermediate)
+- Multi-market support (Chinese A-shares + Cryptocurrency)
+
+#### EPDStocksUpdater.py - Chinese A-Share Data Manager v6.0
+```python
+class ChineseStockManager:
+    """Production-ready Chinese stock data management"""
+    def __init__(self, config: Config):
+        self.config = config
+        self.data_source_manager = DataSourceManager(config)
+        self.updater = StockDataUpdater(config)
+        self.file_analyzer = FileAnalyzer(config)
+```
+
+**Key Features**:
+- Multi-source data collection with intelligent fallback
+- Organized directory structure (shanghai_6xx/, shenzhen_0xx/, etc.)
+- Advanced retry logic with exponential backoff
+- Data quality assessment and validation
+- Progress tracking and recovery mechanisms
+
+#### EPDHuobiUpdater.py - HTX Crypto Data Collector v5.0
+```python
+class HighSpeedDataCollector:
+    """High-performance cryptocurrency data collection"""
+    def __init__(self, config: Config):
+        self.config = config
+        self.htx_client = HTXAPIClient(config)
+        self.ccxt_collector = CCXTDataCollector(config)
+```
+
+**Key Features**:
+- Parallel processing for multiple symbols
+- HTX API authentication and rate limiting
+- Multi-exchange support with automatic fallback
+- Concurrent data fetching with thread pools
+- Smart caching to avoid re-downloading
+
+### Data Flow Integration
+```
+Market Data Sources
+        ↓
+EPD Data Collection Tools
+├── EPDStocksUpdater → Chinese A-Share Data
+├── EPDHuobiUpdater → Cryptocurrency Data
+└── EPDScanner → Pattern Analysis
+        ↓
+Organized Data Structure
+├── Chinese_Market/data/
+│   ├── shanghai_6xx/
+│   ├── shenzhen_0xx/
+│   └── huobi/spot_usdt/1d/
+        ↓
+Pattern Analysis Pipeline
+        ↓
+Professional Results & Insights
+```
+
+### Configuration Management
+- **htx_config.json**: Centralized configuration for HTX API credentials and collection settings
+- **Environment-specific**: Supports different configurations for development/production
+- **Secure**: API credentials management with proper authentication
+
 ---
 
 **This architecture enables EPDS to be both powerful and flexible, providing institutional-quality analysis while remaining extensible for custom requirements.**
