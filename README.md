@@ -71,6 +71,58 @@ python main.py
 4. **🎯 Quick Scan (Limited Symbols)**: Fast analysis for testing
 5. **🚀 Full Professional Scan (All Symbols)**: Comprehensive analysis
 
+## 📁 Project Structure
+
+```
+Early-Pump-Detection-System/
+├── 📄 README.md                    # Comprehensive project overview and documentation
+├── 📦 requirements.txt             # Python dependencies and package requirements
+├── 🐍 main.py                      # Main system orchestrator and entry point
+├── 🎭 demo.py                      # Demonstration script and system overview
+├── 🧪 validate_setup.py            # System validation and setup verification
+├── 🚫 .gitignore                   # Git ignore patterns for clean repository
+├── 📚 docs/                        # Comprehensive documentation
+│   ├── 📖 installation.md          # Detailed installation and setup guide
+│   ├── 📚 user-guide.md            # Complete user manual and usage examples
+│   ├── 🏗️ architecture.md          # System design and technical architecture
+│   └── 📋 api-reference.md         # API documentation and component reference
+├── 🔧 pattern_analyzers/           # High-level pattern analysis components
+│   ├── __init__.py                 # Package initialization and auto-discovery
+│   ├── base_pattern_analyzer.py    # Abstract base class for pattern analyzers
+│   └── professional_pattern_analyzer.py  # Enhanced analyzer with v6.1 features
+├── 🔍 pattern_detectors/           # Core pattern detection algorithms
+│   ├── __init__.py                 # Package initialization and auto-discovery
+│   ├── base_detector.py            # Abstract base class for pattern detectors
+│   └── advanced_pattern_detector.py # 20+ sophisticated detection algorithms
+├── 📊 stage_analyzers/             # Multi-stage market analysis pipeline
+│   ├── __init__.py                 # Package initialization and auto-discovery
+│   ├── base_stage_analyzer.py      # Abstract base class for stage analysis
+│   └── enhanced_stage_analyzer.py  # Advanced multi-stage analysis system
+├── 🧪 tests/                       # Testing infrastructure and test cases
+│   └── test_system.py              # System integration and component tests
+├── 📝 examples/                    # Usage examples and sample implementations
+│   └── README.md                   # Examples documentation and usage guide
+├── 🤝 CONTRIBUTING.md              # Development guidelines and contribution guide
+└── 📋 CHANGELOG.md                 # Version history and release notes
+```
+
+### 🗂️ Directory Descriptions
+
+#### Core System Files
+- **`main.py`**: Central orchestrator implementing the ProfessionalTradingOrchestrator with auto-discovery
+- **`demo.py`**: Interactive demonstration showcasing system capabilities without full dependencies
+- **`validate_setup.py`**: Comprehensive validation script for system setup verification
+
+#### Analysis Components (Auto-Discovery Architecture)
+- **`pattern_analyzers/`**: High-level pattern analysis and coordination layer
+- **`pattern_detectors/`**: Core pattern detection with 20+ sophisticated algorithms
+- **`stage_analyzers/`**: Multi-stage market analysis (accumulation, markup, distribution, decline)
+
+#### Documentation & Support
+- **`docs/`**: Complete documentation suite with installation, usage, and architecture guides
+- **`examples/`**: Practical usage examples and integration patterns
+- **`tests/`**: Testing infrastructure for system validation
+
 ### Market Data Structure
 ```
 Chinese_Market/data/
