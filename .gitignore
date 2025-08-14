@@ -1,0 +1,209 @@
+# Early Pump Detection System - .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.env
+.venv
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Data files and directories
+Chinese_Market/
+market_data/
+test_market_data/
+data/
+*.csv
+*.xlsx
+*.xls
+
+# Results and output files
+results/
+professional_results/
+analysis_*.json
+pattern_analysis_*.json
+professional_analysis_*.json
+*.log
+
+# Configuration files with sensitive data
+config_local.json
+secrets.json
+api_keys.json
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Large model files
+*.pkl
+*.pickle
+*.model
+*.h5
+
+# Documentation build
+docs/_build/
+docs/build/
+
+# Performance test results
+performance_*.json
+benchmark_*.txt
+
+# Cache directories
+.cache/
+cache/
+
+# Local development files
+local_*
+dev_*
+test_data_local/
+
+# Compiled translations
+*.mo
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Editor backup files
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# System files
+.fuse_hidden*
+.nfs*
+
+# Thumbnails
+._*
+
+# Local configuration override
+config.local.json
+settings.local.json
+
+# Profiling data
+*.prof
+
+# Memory dumps
+*.dump
+
+# Core dumps
+core
+core.*

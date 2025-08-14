@@ -1,0 +1,373 @@
+# 📊 User Guide
+
+## Overview
+
+The Early Pump Detection System (EPDS) is a professional-grade trading analysis tool that helps identify early pump opportunities in Chinese A-shares and cryptocurrency markets. This guide covers everything you need to know to use the system effectively.
+
+## 🚀 Getting Started
+
+### First Run
+```bash
+python main.py
+```
+
+You'll see the Professional Pattern Analyzer interface:
+```
+====================================================================================================
+   🎮 PROFESSIONAL PATTERN ANALYZER v6.1
+   🧠 Auto-Discovery Modular Trading Analysis
+   💎 Unlimited Patterns | Enhanced Architecture
+   🔌 Plugin System - Add Components Without Code Changes!
+   🚀 M1/M2 MacBook Optimization ACTIVE!  (if detected)
+====================================================================================================
+```
+
+### Interactive Menu
+```
+📊 Select Your Professional Quest:
+1. 🏮 Chinese A-Shares Professional Analysis
+2. 🪙 Cryptocurrency Advanced Scanning  
+3. 🌍 Global Market Domination (Both)
+4. 🎯 Quick Scan (Limited Symbols)
+5. 🚀 Full Professional Scan (All Symbols)
+
+Choose your trading destiny (1-5, default=3):
+```
+
+## 📈 Analysis Options
+
+### 1. 🏮 Chinese A-Shares Analysis
+- **Focus**: Chinese stock markets only
+- **Coverage**: Shanghai (6xx), Shenzhen (0xx), Beijing (8xx) exchanges
+- **Best for**: A-share specialists, domestic market focus
+- **Estimated time**: 3-10 minutes (depending on hardware)
+
+### 2. 🪙 Cryptocurrency Scanning
+- **Focus**: Crypto markets only
+- **Coverage**: Huobi, Binance, and other major exchanges
+- **Best for**: Crypto traders, DeFi opportunities
+- **Estimated time**: 2-8 minutes
+
+### 3. 🌍 Global Market Domination (Default)
+- **Focus**: Both markets simultaneously
+- **Coverage**: Complete analysis across all supported assets
+- **Best for**: Diversified traders, maximum opportunities
+- **Estimated time**: 5-15 minutes (M1) / 10-30 minutes (Intel)
+
+### 4. 🎯 Quick Scan (Recommended for Testing)
+- **Focus**: Limited symbol set for rapid analysis
+- **Coverage**: Representative sample from each market
+- **Best for**: Testing, quick market pulse check
+- **Estimated time**: 1-3 minutes
+
+### 5. 🚀 Full Professional Scan
+- **Focus**: Comprehensive analysis of all available symbols
+- **Coverage**: Maximum depth and breadth
+- **Best for**: Professional traders, comprehensive research
+- **Estimated time**: 10-45 minutes
+
+## 🎯 Understanding Results
+
+### Professional Grading System
+
+#### 👑 Institutional Grade (85-100)
+- **Characteristics**: Exceptional setups with multiple confirmation signals
+- **Quality**: Institutional-level quality
+- **Risk/Reward**: Optimal risk-adjusted returns
+- **Action**: Prime candidates for position allocation
+
+#### 🏆 Professional Grade (70-84)
+- **Characteristics**: High-quality setups with strong technical foundation
+- **Quality**: Professional trader standard
+- **Risk/Reward**: Favorable risk-reward ratios
+- **Action**: Strong consideration for trading
+
+#### ⭐ Intermediate Grade (55-69)
+- **Characteristics**: Decent setups requiring careful evaluation
+- **Quality**: Intermediate trader level
+- **Risk/Reward**: Moderate potential
+- **Action**: Detailed analysis recommended
+
+### Pattern Combination Groups
+
+#### 🔥 ACCUMULATION ZONE
+```
+Patterns: Hidden Accumulation, Smart Money Flow, Institutional Absorption
+Signals: Large players quietly accumulating positions
+Strategy: Early entry before institutional demand becomes visible
+```
+
+#### 💎 BREAKOUT IMMINENT  
+```
+Patterns: Coiled Spring, Pressure Cooker, Volume Pocket
+Signals: Technical setup ready for explosive move
+Strategy: Position before breakout, tight stops
+```
+
+#### 🚀 ROCKET FUEL
+```
+Patterns: Fuel Tank Pattern, Ignition Sequence, Momentum Vacuum
+Signals: All systems ready for sustained upward movement
+Strategy: Momentum play with trailing stops
+```
+
+#### ⚡ STEALTH MODE
+```
+Patterns: Silent Accumulation, Whale Whispers, Dark Pool Activity
+Signals: Large volume operations below the radar
+Strategy: Follow smart money, patient accumulation
+```
+
+## 🔍 Reading Analysis Output
+
+### Sample Output Structure
+```
+🏆 PROFESSIONAL GRADE ANALYSIS:
+   📊 Average Professional Grade: 76.3
+   🏆 Highest Professional Grade: 94.2
+   👑 Institutional Grade: 12
+   🏆 Professional Grade: 28
+   ⭐ Intermediate Grade: 45
+
+💎 TOP OPPORTUNITIES:
+Symbol: 600519    Grade: 94.2    Pattern: 🌟 PERFECT STORM
+Symbol: BTC_USDT  Grade: 91.8    Pattern: 🚀 ROCKET FUEL
+Symbol: 000858    Grade: 88.7    Pattern: 🔥 ACCUMULATION ZONE
+```
+
+### Key Metrics Explained
+
+#### **Grade Score (0-100)**
+- Composite score combining multiple technical factors
+- Higher scores indicate better risk-adjusted opportunities
+- Considers volume, momentum, pattern strength, and market conditions
+
+#### **Pattern Classification**
+- Primary pattern group the symbol belongs to
+- Indicates the type of opportunity and suggested strategy
+- Multiple patterns may apply to single symbol
+
+#### **Market Type**
+- CRYPTO: Cryptocurrency markets
+- CHINESE_STOCK: Chinese A-share markets
+- Helps with position sizing and risk management
+
+## ⚙️ Advanced Features
+
+### System Optimization
+
+#### M1/M2 MacBook Users
+```
+Automatic detection and optimization:
+✅ Optimal process count calculation
+✅ Memory efficiency improvements  
+✅ 2x performance multiplier
+✅ Battery optimization
+```
+
+#### Performance Monitoring
+```
+System Information Display:
+💻 Platform: Darwin
+🔧 Processor: arm64 (M1 detected)
+⚙️ CPU Cores: 8
+🚀 M1/M2 Detected: Optimal processes = 6
+```
+
+### Blacklist Management
+
+#### Static Blacklist
+```python
+# Pre-configured low-quality symbols
+BLACKLISTED_STOCKS = {
+    '002916', '002780', '002594'  # Already pumped Chinese stocks
+}
+
+BLACKLISTED_CRYPTO = {
+    'LUNA_USDT', 'FTT_USDT'      # Failed projects
+}
+```
+
+#### Dynamic Blacklist
+- Learning system automatically excludes poor performers
+- Adapts to market conditions
+- Reduces noise in results
+
+### Learning System
+- Tracks pattern performance over time
+- Adjusts scoring based on historical success
+- Improves accuracy with each analysis run
+
+## 🛠 Customization
+
+### Environment Variables
+```bash
+# Custom data directory
+export EPDS_DATA_DIR="/your/custom/path"
+
+# Override process count
+export EPDS_PROCESSES=12
+
+# Enable debug mode
+export EPDS_DEBUG=1
+```
+
+### Configuration Options
+Create `config.json` in project root:
+```json
+{
+    "max_symbols_quick_scan": 100,
+    "min_professional_grade": 70,
+    "enable_crypto_analysis": true,
+    "enable_stock_analysis": true,
+    "save_results_automatically": true,
+    "result_file_prefix": "analysis_"
+}
+```
+
+## 📊 Data Management
+
+### Data Format Requirements
+
+#### Chinese Stocks
+```csv
+Date,Open,High,Low,Close,Volume
+2023-01-01,10.50,10.80,10.20,10.75,1500000
+2023-01-02,10.75,11.20,10.65,11.10,2100000
+```
+
+#### Cryptocurrency
+```csv
+Date,Open,High,Low,Close,Volume
+2023-01-01,45000.0,46500.0,44800.0,46200.0,850.5
+2023-01-02,46200.0,47800.0,45900.0,47500.0,920.3
+```
+
+### Data Sources
+- **Chinese Stocks**: Major financial data providers
+- **Cryptocurrency**: Exchange APIs (Huobi, Binance)
+- **Format**: Daily OHLCV data minimum
+- **History**: 200+ days recommended for accurate analysis
+
+## 🎮 Game Elements
+
+### Messages & Motivation
+```
+🎰 Rolling the dice for patterns...
+🎲 Shuffling the deck of stocks...
+🎯 Hunting for hidden treasures...
+🔮 Crystal ball says...
+💎 Mining for diamond patterns...
+```
+
+### Achievement System
+- **Level Up**: Discover new pattern combinations
+- **Treasure Hunt**: Find high-grade opportunities
+- **Pattern Master**: Consistent high-quality results
+
+## 🚨 Risk Management
+
+### Important Disclaimers
+⚠️ **Educational Purpose Only**: This tool is for analysis and education
+⚠️ **Not Financial Advice**: Always do your own research
+⚠️ **Risk Warning**: Trading involves substantial risk of loss
+⚠️ **Professional Consultation**: Consult financial advisors
+
+### Best Practices
+1. **Start Small**: Begin with paper trading or small positions
+2. **Diversify**: Don't rely on single pattern or symbol
+3. **Risk Management**: Always use stop losses
+4. **Position Sizing**: Risk only what you can afford to lose
+5. **Continuous Learning**: Markets evolve, keep studying
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### "No data found"
+```bash
+# Check data directory structure
+ls -la Chinese_Market/data/
+# Ensure CSV files are present and properly formatted
+```
+
+#### Slow performance
+```bash
+# Try quick scan first
+# Choose option 4 in menu
+# Consider upgrading to SSD storage
+```
+
+#### Memory errors
+```bash
+# Reduce number of processes
+export EPDS_PROCESSES=4
+# Or use quick scan mode
+```
+
+### Performance Tips
+1. **Use SSD**: Significantly faster data loading
+2. **Close Other Apps**: Free up system resources  
+3. **Regular Updates**: Keep dependencies current
+4. **Monitor Resources**: Watch CPU and memory usage
+
+## 📈 Interpreting Market Conditions
+
+### Bull Market Signals
+- High number of Institutional Grade opportunities
+- Multiple ROCKET FUEL patterns
+- Strong across both markets
+
+### Bear Market Signals  
+- Increased ACCUMULATION ZONE patterns
+- Lower overall grades
+- Focus on quality over quantity
+
+### Sideways Market
+- Mixed pattern distribution
+- STEALTH MODE patterns prominent
+- Selective opportunities
+
+## 🎯 Trading Strategies by Pattern
+
+### For ACCUMULATION ZONE 🔥
+```
+Entry: Early stages of accumulation
+Stop: Below accumulation range
+Target: Breakout from accumulation
+Timeframe: Medium to long term
+```
+
+### For BREAKOUT IMMINENT 💎
+```
+Entry: Just before or at breakout
+Stop: Back below breakout level
+Target: Measured move from pattern
+Timeframe: Short to medium term
+```
+
+### For ROCKET FUEL 🚀
+```
+Entry: Confirmation of momentum
+Stop: Trailing stop loss
+Target: Ride the trend
+Timeframe: Variable, momentum-based
+```
+
+## 📞 Support & Community
+
+### Getting Help
+1. **Documentation**: Check all docs/ files
+2. **GitHub Issues**: Report bugs and feature requests
+3. **Discussions**: Community Q&A and sharing
+4. **Email Support**: For critical issues
+
+### Contributing
+- Pattern suggestions
+- Performance improvements
+- Additional market support
+- Documentation enhancements
+
+---
+
+**Ready to find your next trading opportunity? 🚀 Start with a Quick Scan (option 4) to get familiar with the system!**
