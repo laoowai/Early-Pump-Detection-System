@@ -700,6 +700,117 @@ class CustomDetector(BasePatternDetector):
         return None
 ```
 
+### BaseTimeframeAnalyzer
+
+Abstract base class for multi-timeframe analysis components.
+
+```python
+class BaseTimeframeAnalyzer(ABC):
+    """Abstract base for timeframe analysis components"""
+```
+
+#### Abstract Methods
+
+##### `analyze_timeframe()`
+```python
+@abstractmethod
+def analyze_timeframe(self, df: pd.DataFrame, timeframe: TimeFrame, is_crypto: bool = False) -> List[PatternType]:
+    """
+    Analyze patterns for a specific timeframe
+    
+    Args:
+        df (pd.DataFrame): OHLCV data
+        timeframe (TimeFrame): Target timeframe for analysis
+        is_crypto (bool): Whether analyzing cryptocurrency data
+        
+    Returns:
+        List[PatternType]: Detected patterns for the timeframe
+    """
+```
+
+##### `find_best_combination()`
+```python
+@abstractmethod
+def find_best_combination(self, timeframe_patterns: Dict[TimeFrame, List[PatternType]], 
+                         is_crypto: bool = False) -> PatternCombination:
+    """
+    Find optimal pattern combination across timeframes
+    
+    Args:
+        timeframe_patterns (Dict[TimeFrame, List[PatternType]]): Patterns detected per timeframe
+        is_crypto (bool): Whether analyzing cryptocurrency data
+        
+    Returns:
+        PatternCombination: Best pattern combination with scoring
+    """
+```
+
+##### `determine_consolidation_type()`
+```python
+@abstractmethod
+def determine_consolidation_type(self, df: pd.DataFrame, is_crypto: bool = False) -> ConsolidationType:
+    """
+    Determine type of consolidation pattern
+    
+    Args:
+        df (pd.DataFrame): OHLCV data
+        is_crypto (bool): Whether analyzing cryptocurrency data
+        
+    Returns:
+        ConsolidationType: Classification of consolidation pattern
+    """
+```
+
+#### Concrete Methods
+
+##### `get_supported_timeframes()`
+```python
+def get_supported_timeframes(self) -> List[TimeFrame]:
+    """
+    Return list of supported timeframe periods
+    
+    Returns:
+        List[TimeFrame]: Fibonacci-based timeframe periods:
+            - D1, D3, D6, D11, D21, D33, D55, D89
+    """
+```
+
+##### `calculate_entry_setup()`
+```python
+def calculate_entry_setup(self, df: pd.DataFrame, stage_results: List, is_crypto: bool = False) -> Dict[str, float]:
+    """
+    Calculate optimal entry setup based on timeframe analysis
+    
+    Args:
+        df (pd.DataFrame): OHLCV data
+        stage_results (List): Results from stage analysis
+        is_crypto (bool): Whether analyzing cryptocurrency data
+        
+    Returns:
+        Dict[str, float]: Entry setup parameters:
+            - entry_price: Recommended entry price
+            - stop_loss: Stop loss level
+            - target1: First profit target
+            - target2: Second profit target
+            - risk_reward_1: Risk/reward ratio
+            - position_size_pct: Recommended position size percentage
+    """
+```
+
+##### `validate_data()`
+```python
+def validate_data(self, df: pd.DataFrame) -> bool:
+    """
+    Validate input data for timeframe analysis
+    
+    Args:
+        df (pd.DataFrame): OHLCV data to validate
+        
+    Returns:
+        bool: True if data is suitable for analysis
+    """
+```
+
 ## 🚨 Error Handling
 
 ### Common Exceptions

@@ -170,6 +170,50 @@ class EnhancedStageAnalyzer(BaseStageAnalyzer):
         return [self.analyze_stage(df, stage) for stage in stages]
 ```
 
+### `/timeframe_analyzers/`
+**Purpose**: Multi-timeframe analysis and correlation
+
+#### `base_timeframe_analyzer.py`
+```python
+class BaseTimeframeAnalyzer(ABC):
+    """Abstract base for timeframe analysis"""
+    
+    @abstractmethod
+    def analyze_timeframe(self, df: pd.DataFrame, timeframe: TimeFrame, is_crypto: bool = False) -> List[PatternType]:
+        """Analyze patterns for specific timeframe"""
+        pass
+    
+    @abstractmethod
+    def find_best_combination(self, timeframe_patterns: Dict[TimeFrame, List[PatternType]], 
+                             is_crypto: bool = False) -> PatternCombination:
+        """Find optimal pattern combination across timeframes"""
+        pass
+```
+
+**Key Features**:
+- Multi-timeframe coordination
+- Pattern correlation analysis
+- Fibonacci-based timeframe periods
+- Entry setup calculation
+
+#### `enhanced_multi_timeframe_analyzer.py`
+```python
+class EnhancedMultiTimeframeAnalyzer(BaseTimeframeAnalyzer):
+    """Enhanced timeframe correlation with sophisticated pattern analysis"""
+    
+    def __init__(self, learning_system=None, blacklist_manager=None):
+        super().__init__(learning_system, blacklist_manager)
+        self.version = "6.1"
+        self.pattern_correlation_matrix = self._build_pattern_correlation_matrix()
+```
+
+**Key Features**:
+- Timeframe-specific pattern detection
+- Technical indicator correlation
+- Volume-based analysis across timeframes
+- Pattern combination scoring
+- Data sampling adjustment
+
 ## 🔄 Auto-Discovery System
 
 ### Component Registry
@@ -181,12 +225,14 @@ class ComponentRegistry:
         self.pattern_analyzers = {}
         self.pattern_detectors = {}
         self.stage_analyzers = {}
+        self.timeframe_analyzers = {}
         
     def discover_components(self):
         """Automatically discover and register components"""
         self._discover_pattern_analyzers()
         self._discover_pattern_detectors()  
         self._discover_stage_analyzers()
+        self._discover_timeframe_analyzers()
 ```
 
 ### Discovery Process

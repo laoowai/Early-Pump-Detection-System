@@ -58,6 +58,7 @@ def show_project_structure():
     print("├── 🔧 pattern_analyzers/        # Analysis components")
     print("├── 🔍 pattern_detectors/        # Detection algorithms")
     print("├── 📊 stage_analyzers/          # Stage analysis")
+    print("├── ⏰ timeframe_analyzers/       # Multi-timeframe analysis")
     print("├── 🧪 tests/                    # Testing infrastructure")
     print("├── 📝 examples/                 # Usage examples")
     print("├── 🤝 CONTRIBUTING.md           # Development guidelines")

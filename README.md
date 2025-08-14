@@ -273,6 +273,23 @@ Early-Pump-Detection-System/
 │       ├── stage_5_momentum_analysis()     # Momentum and trend analysis
 │       ├── stage_6_pattern_recognition()   # Advanced pattern recognition
 │       └── stage_7_risk_assessment()       # Risk evaluation and scoring
+├── ⏰ timeframe_analyzers/         # Multi-timeframe analysis components
+│   ├── __init__.py                 # Package initialization and auto-discovery
+│   │   └── auto_discover_timeframe_analyzers() # Auto-discovery function
+│   ├── base_timeframe_analyzer.py  # Abstract base class for timeframe analysis
+│   │   ├── BaseTimeframeAnalyzer  # Base class for all timeframe analyzers
+│   │   ├── analyze_timeframe()    # Core timeframe analysis method
+│   │   ├── find_best_combination() # Pattern combination optimization
+│   │   ├── determine_consolidation_type() # Consolidation pattern classification
+│   │   ├── get_supported_timeframes() # Available timeframe periods
+│   │   └── calculate_entry_setup() # Entry point calculation
+│   └── enhanced_multi_timeframe_analyzer.py # Advanced multi-timeframe correlation
+│       ├── EnhancedMultiTimeframeAnalyzer # Enhanced timeframe analysis class
+│       ├── _detect_timeframe_specific_patterns() # Timeframe-specific pattern detection
+│       ├── _detect_technical_patterns() # Technical indicator patterns
+│       ├── _detect_volume_patterns() # Volume-based pattern analysis
+│       ├── _calculate_combination_score() # Pattern combination scoring
+│       └── _adjust_data_for_timeframe() # Data sampling adjustment
 ├── 🧪 tests/                       # Testing infrastructure and test cases
 │   └── test_system.py              # System integration and component tests
 ├── 📝 examples/                    # Usage examples and sample implementations
@@ -327,6 +344,14 @@ Early-Pump-Detection-System/
 - **Enhanced Implementation**: `EnhancedStageAnalyzer` - Advanced 7-stage analysis pipeline
   - **Stage Analysis**: `stage_1_smart_money_detection()`, `stage_2_accumulation_analysis()`, `stage_3_technical_confluence()`, `stage_4_volume_profiling()`, `stage_5_momentum_analysis()`, `stage_6_pattern_recognition()`, `stage_7_risk_assessment()`
 - **Auto-Discovery**: `auto_discover_stage_analyzers()` - Dynamic stage analyzer loading
+
+##### Timeframe Analyzers (`timeframe_analyzers/`)
+- **Base Classes**: `BaseTimeframeAnalyzer` - Core interface for multi-timeframe analysis
+  - **Core Methods**: `analyze_timeframe()`, `find_best_combination()`, `determine_consolidation_type()`, `get_supported_timeframes()`, `calculate_entry_setup()`
+- **Enhanced Implementation**: `EnhancedMultiTimeframeAnalyzer` - Advanced timeframe correlation system
+  - **Timeframe Analysis**: `_detect_timeframe_specific_patterns()`, `_detect_technical_patterns()`, `_detect_volume_patterns()`, `_calculate_combination_score()`, `_adjust_data_for_timeframe()`
+  - **Supported Timeframes**: D1, D3, D6, D11, D21, D33, D55, D89 (Fibonacci-based periods)
+- **Auto-Discovery**: `auto_discover_timeframe_analyzers()` - Dynamic timeframe analyzer loading
 
 #### Documentation & Support
 - **`docs/`**: Complete documentation suite with installation, usage, and architecture guides
@@ -389,6 +414,11 @@ timestamp,open,high,low,close,volume,volume_quote,symbol,price_change
 - **BaseStageAnalyzer**: Core stage analysis interface
 - **EnhancedStageAnalyzer**: Multi-stage analysis pipeline
 - Auto-discovery of custom stage analyzers
+
+#### Timeframe Analyzers (`timeframe_analyzers/`)
+- **BaseTimeframeAnalyzer**: Core timeframe analysis interface
+- **EnhancedMultiTimeframeAnalyzer**: Multi-timeframe correlation system
+- Auto-discovery of custom timeframe analyzers
 
 ### 🧠 Core Systems
 - **ComponentRegistry**: Auto-discovery system for all components
