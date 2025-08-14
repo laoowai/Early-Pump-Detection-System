@@ -64,6 +64,97 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### 📈 EPDStocksUpdater.py - Chinese A-Stock Data Collection
+
+**Purpose**: Downloads and updates Chinese A-share stock data from multiple sources.
+
+**Data Sources**:
+- **AkShare**: Free, no API key required (primary source)
+- **Tushare**: Requires free API token (backup source)  
+- **BaoStock**: Free backup source
+
+**Usage**:
+```bash
+# Basic usage - update all stocks
+python EPDStocksUpdater.py
+
+# Check system dependencies
+python EPDStocksUpdater.py --check-deps
+
+# Update specific stocks (comma-separated)
+python EPDStocksUpdater.py --symbols 000001,600519,000002
+```
+
+**Configuration**: 
+- Automatically creates organized directory structure
+- Stores data in `Chinese_Market/data/shanghai_6xx/`, `shenzhen_0xx/`, etc.
+
+### 🪙 EPDHuobiUpdater.py - Cryptocurrency Data Collection
+
+**Purpose**: Collects HTX (Huobi) spot USDT cryptocurrency data with optional API acceleration.
+
+**Features**:
+- Downloads OHLCV data for major USDT pairs
+- Supports API keys for higher rate limits
+- Multiple exchange fallback via CCXT
+
+**Usage**:
+```bash
+# Basic usage - collect crypto data
+python EPDHuobiUpdater.py
+
+# First time setup: configure API keys (optional)
+# Edit htx_config.json:
+# {
+#   "htx_access_key": "your_htx_access_key",
+#   "htx_secret_key": "your_htx_secret_key"
+# }
+```
+
+**Configuration**: Edit `htx_config.json` to add HTX API credentials for faster data collection.
+
+### 🔍 EPDScanner.py - Pattern Analysis & Scanning
+
+**Purpose**: Analyzes collected data for early pump detection patterns using 25+ algorithms.
+
+**Features**:
+- 10-stage professional analysis pipeline
+- Game-like scoring system (Common to Legendary)
+- Multi-timeframe pattern detection
+- Smart money and accumulation detection
+
+**Usage**:
+```bash
+# Run comprehensive analysis
+python EPDScanner.py
+
+# The scanner will automatically:
+# 1. Load data from Chinese_Market/data/ directories
+# 2. Apply 25+ pattern recognition algorithms
+# 3. Score and rank potential pump opportunities
+# 4. Display results with game-like rarity scoring
+```
+
+### Advanced Python API Usage
+```python
+# For advanced users - direct API access
+from EPDStocksUpdater import ChineseStockManager
+from EPDHuobiUpdater import CryptoDataCollector
+from EPDScanner import ProfessionalPatternAnalyzer
+
+# Update specific stocks
+stock_manager = ChineseStockManager()
+results = stock_manager.update_specific_stocks(['000001', '600519'])
+
+# Collect specific crypto pairs
+crypto_collector = CryptoDataCollector()
+crypto_data = crypto_collector.collect_symbol('BTC_USDT')
+
+# Run pattern analysis
+analyzer = ProfessionalPatternAnalyzer()
+analysis_results = analyzer.analyze_all_markets()
+```
+
 ### Interactive Menu Options
 1. **🏮 Chinese A-Shares Professional Analysis**: Focus on Chinese stock markets
 2. **🪙 Cryptocurrency Advanced Scanning**: Crypto market analysis
