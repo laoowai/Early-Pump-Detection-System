@@ -2,6 +2,7 @@
 """
 Professional Pattern Analyzer v6.1 - Main Body
 Auto-Discovery Modular Trading Analysis System
+ENHANCED with Better Error Handling and Initialization
 """
 
 import pandas as pd
@@ -30,6 +31,7 @@ import platform
 import importlib
 import inspect
 import glob
+import traceback
 
 warnings.filterwarnings('ignore')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -216,115 +218,170 @@ class MultiTimeframeAnalysis:
     technical_indicators: Dict[str, float] = field(default_factory=dict)
 
 
-# ================== AUTO-DISCOVERY SYSTEM ==================
+# ================== AUTO-DISCOVERY SYSTEM - ENHANCED ==================
 class ComponentRegistry:
-    """Auto-discovery registry for all components"""
+    """Enhanced auto-discovery registry for all components with better error handling"""
     
     def __init__(self):
         self.pattern_detectors = {}
         self.stage_analyzers = {}
         self.pattern_analyzers = {}
         self.timeframe_analyzers = {}
+        self.initialization_errors = []
         self.discover_all_components()
     
     def discover_all_components(self):
-        """Auto-discover all components from folders"""
+        """Auto-discover all components from folders with enhanced error handling"""
+        logger.info("🔍 Starting component auto-discovery...")
+        
         self.discover_pattern_detectors()
         self.discover_stage_analyzers()
         self.discover_pattern_analyzers()
         self.discover_timeframe_analyzers()
+        
+        # Log summary
+        total_components = (len(self.pattern_detectors) + len(self.stage_analyzers) + 
+                          len(self.pattern_analyzers) + len(self.timeframe_analyzers))
+        
+        if self.initialization_errors:
+            logger.warning(f"⚠️  Component discovery completed with {len(self.initialization_errors)} errors")
+            for error in self.initialization_errors:
+                logger.debug(f"   Error: {error}")
+        else:
+            logger.info(f"✅ Component discovery completed successfully - {total_components} components loaded")
     
     def discover_pattern_detectors(self):
-        """Auto-discover pattern detectors"""
+        """Auto-discover pattern detectors with enhanced error handling"""
         try:
             folder_path = Path("pattern_detectors")
-            if folder_path.exists():
-                for file_path in folder_path.glob("*.py"):
-                    if file_path.name.startswith("__"):
-                        continue
+            if not folder_path.exists():
+                self.initialization_errors.append("pattern_detectors folder not found")
+                return
+                
+            for file_path in folder_path.glob("*.py"):
+                if file_path.name.startswith("__"):
+                    continue
+                
+                module_name = f"pattern_detectors.{file_path.stem}"
+                try:
+                    module = importlib.import_module(module_name)
                     
-                    module_name = f"pattern_detectors.{file_path.stem}"
-                    try:
-                        module = importlib.import_module(module_name)
-                        
-                        # Find all detector classes
-                        for name, obj in inspect.getmembers(module, inspect.isclass):
-                            if hasattr(obj, 'detect_patterns') and name != 'BasePatternDetector':
-                                self.pattern_detectors[name] = obj
-                                logger.info(f"🔍 Auto-discovered pattern detector: {name}")
-                    except Exception as e:
-                        logger.warning(f"Failed to load pattern detector {file_path.name}: {e}")
+                    # Find all detector classes
+                    for name, obj in inspect.getmembers(module, inspect.isclass):
+                        if hasattr(obj, 'detect_patterns') and name != 'BasePatternDetector':
+                            self.pattern_detectors[name] = obj
+                            logger.info(f"🔍 Auto-discovered pattern detector: {name}")
+                except Exception as e:
+                    error_msg = f"Failed to load pattern detector {file_path.name}: {e}"
+                    self.initialization_errors.append(error_msg)
+                    logger.debug(error_msg)
         except Exception as e:
-            logger.warning(f"Pattern detectors folder not found: {e}")
+            error_msg = f"Error in pattern detector discovery: {e}"
+            self.initialization_errors.append(error_msg)
+            logger.warning(error_msg)
     
     def discover_stage_analyzers(self):
-        """Auto-discover stage analyzers"""
+        """Auto-discover stage analyzers with enhanced error handling"""
         try:
             folder_path = Path("stage_analyzers")
-            if folder_path.exists():
-                for file_path in folder_path.glob("*.py"):
-                    if file_path.name.startswith("__"):
-                        continue
+            if not folder_path.exists():
+                self.initialization_errors.append("stage_analyzers folder not found")
+                return
+                
+            for file_path in folder_path.glob("*.py"):
+                if file_path.name.startswith("__"):
+                    continue
+                
+                module_name = f"stage_analyzers.{file_path.stem}"
+                try:
+                    module = importlib.import_module(module_name)
                     
-                    module_name = f"stage_analyzers.{file_path.stem}"
-                    try:
-                        module = importlib.import_module(module_name)
-                        
-                        # Find all analyzer classes
-                        for name, obj in inspect.getmembers(module, inspect.isclass):
-                            if hasattr(obj, 'run_all_stages') and name != 'BaseStageAnalyzer':
-                                self.stage_analyzers[name] = obj
-                                logger.info(f"📊 Auto-discovered stage analyzer: {name}")
-                    except Exception as e:
-                        logger.warning(f"Failed to load stage analyzer {file_path.name}: {e}")
+                    # Find all analyzer classes
+                    for name, obj in inspect.getmembers(module, inspect.isclass):
+                        if hasattr(obj, 'run_all_stages') and name != 'BaseStageAnalyzer':
+                            self.stage_analyzers[name] = obj
+                            logger.info(f"📊 Auto-discovered stage analyzer: {name}")
+                except Exception as e:
+                    error_msg = f"Failed to load stage analyzer {file_path.name}: {e}"
+                    self.initialization_errors.append(error_msg)
+                    logger.debug(error_msg)
         except Exception as e:
-            logger.warning(f"Stage analyzers folder not found: {e}")
+            error_msg = f"Error in stage analyzer discovery: {e}"
+            self.initialization_errors.append(error_msg)
+            logger.warning(error_msg)
     
     def discover_pattern_analyzers(self):
-        """Auto-discover pattern analyzers"""
+        """Auto-discover pattern analyzers with enhanced error handling"""
         try:
             folder_path = Path("pattern_analyzers")
-            if folder_path.exists():
-                for file_path in folder_path.glob("*.py"):
-                    if file_path.name.startswith("__"):
-                        continue
+            if not folder_path.exists():
+                self.initialization_errors.append("pattern_analyzers folder not found")
+                return
+                
+            for file_path in folder_path.glob("*.py"):
+                if file_path.name.startswith("__"):
+                    continue
+                
+                module_name = f"pattern_analyzers.{file_path.stem}"
+                try:
+                    module = importlib.import_module(module_name)
                     
-                    module_name = f"pattern_analyzers.{file_path.stem}"
-                    try:
-                        module = importlib.import_module(module_name)
-                        
-                        # Find all analyzer classes
-                        for name, obj in inspect.getmembers(module, inspect.isclass):
-                            if hasattr(obj, 'analyze_symbol') and name != 'BasePatternAnalyzer':
-                                self.pattern_analyzers[name] = obj
-                                logger.info(f"🔬 Auto-discovered pattern analyzer: {name}")
-                    except Exception as e:
-                        logger.warning(f"Failed to load pattern analyzer {file_path.name}: {e}")
+                    # Find all analyzer classes
+                    for name, obj in inspect.getmembers(module, inspect.isclass):
+                        if hasattr(obj, 'analyze_symbol') and name != 'BasePatternAnalyzer':
+                            self.pattern_analyzers[name] = obj
+                            logger.info(f"🔬 Auto-discovered pattern analyzer: {name}")
+                except Exception as e:
+                    error_msg = f"Failed to load pattern analyzer {file_path.name}: {e}"
+                    self.initialization_errors.append(error_msg)
+                    logger.debug(error_msg)
         except Exception as e:
-            logger.warning(f"Pattern analyzers folder not found: {e}")
+            error_msg = f"Error in pattern analyzer discovery: {e}"
+            self.initialization_errors.append(error_msg)
+            logger.warning(error_msg)
     
     def discover_timeframe_analyzers(self):
-        """Auto-discover timeframe analyzers"""
+        """Auto-discover timeframe analyzers with enhanced error handling"""
         try:
             folder_path = Path("timeframe_analyzers")
-            if folder_path.exists():
-                for file_path in folder_path.glob("*.py"):
-                    if file_path.name.startswith("__"):
-                        continue
+            if not folder_path.exists():
+                self.initialization_errors.append("timeframe_analyzers folder not found (optional)")
+                return
+                
+            for file_path in folder_path.glob("*.py"):
+                if file_path.name.startswith("__"):
+                    continue
+                
+                module_name = f"timeframe_analyzers.{file_path.stem}"
+                try:
+                    module = importlib.import_module(module_name)
                     
-                    module_name = f"timeframe_analyzers.{file_path.stem}"
-                    try:
-                        module = importlib.import_module(module_name)
-                        
-                        # Find all analyzer classes
-                        for name, obj in inspect.getmembers(module, inspect.isclass):
-                            if hasattr(obj, 'analyze_timeframe') and name != 'BaseTimeframeAnalyzer':
-                                self.timeframe_analyzers[name] = obj
-                                logger.info(f"⏰ Auto-discovered timeframe analyzer: {name}")
-                    except Exception as e:
-                        logger.warning(f"Failed to load timeframe analyzer {file_path.name}: {e}")
+                    # Find all analyzer classes
+                    for name, obj in inspect.getmembers(module, inspect.isclass):
+                        if hasattr(obj, 'analyze_timeframe') and name != 'BaseTimeframeAnalyzer':
+                            self.timeframe_analyzers[name] = obj
+                            logger.info(f"⏰ Auto-discovered timeframe analyzer: {name}")
+                except Exception as e:
+                    error_msg = f"Failed to load timeframe analyzer {file_path.name}: {e}"
+                    self.initialization_errors.append(error_msg)
+                    logger.debug(error_msg)
         except Exception as e:
-            logger.warning(f"Timeframe analyzers folder not found: {e}")
+            error_msg = f"Error in timeframe analyzer discovery: {e}"
+            self.initialization_errors.append(error_msg)
+            logger.debug(error_msg)  # Debug level since timeframe analyzers are optional
+    
+    def get_discovery_summary(self) -> Dict[str, Any]:
+        """Get summary of component discovery"""
+        return {
+            'pattern_detectors': len(self.pattern_detectors),
+            'stage_analyzers': len(self.stage_analyzers),
+            'pattern_analyzers': len(self.pattern_analyzers),
+            'timeframe_analyzers': len(self.timeframe_analyzers),
+            'total_components': (len(self.pattern_detectors) + len(self.stage_analyzers) + 
+                               len(self.pattern_analyzers) + len(self.timeframe_analyzers)),
+            'initialization_errors': len(self.initialization_errors),
+            'error_details': self.initialization_errors
+        }
 
 
 # ================== BLACKLIST MANAGER ==================
@@ -479,9 +536,9 @@ def detect_m1_optimization() -> Dict[str, Any]:
     return system_info
 
 
-# ================== MAIN ORCHESTRATOR ==================
+# ================== MAIN ORCHESTRATOR - ENHANCED ==================
 class ProfessionalTradingOrchestrator:
-    """Main orchestrator that coordinates all components"""
+    """Enhanced main orchestrator that coordinates all components with better error handling"""
     
     def __init__(self, data_dir: str = "Chinese_Market/data"):
         self.data_dir = Path(data_dir)
@@ -489,8 +546,9 @@ class ProfessionalTradingOrchestrator:
         self.blacklist_manager = EnhancedBlacklistManager()
         self.learning_system = ProfessionalLearningSystem()
         self.results = []
+        self.initialization_status = {}
         
-        # Initialize components
+        # Initialize components with enhanced error handling
         self._initialize_components()
         
         # Setup data paths
@@ -511,32 +569,81 @@ class ProfessionalTradingOrchestrator:
         self.crypto_path = self._find_crypto_path()
     
     def _initialize_components(self):
-        """Initialize all discovered components"""
+        """Initialize all discovered components with enhanced error handling"""
         print("\n🚀 INITIALIZING AUTO-DISCOVERED COMPONENTS:")
-        print(f"   🔍 Pattern Detectors: {len(self.component_registry.pattern_detectors)}")
-        print(f"   📊 Stage Analyzers: {len(self.component_registry.stage_analyzers)}")
-        print(f"   🔬 Pattern Analyzers: {len(self.component_registry.pattern_analyzers)}")
-        print(f"   ⏰ Timeframe Analyzers: {len(self.component_registry.timeframe_analyzers)}")
         
-        # Initialize the main components
+        discovery_summary = self.component_registry.get_discovery_summary()
+        print(f"   🔍 Pattern Detectors: {discovery_summary['pattern_detectors']}")
+        print(f"   📊 Stage Analyzers: {discovery_summary['stage_analyzers']}")
+        print(f"   🔬 Pattern Analyzers: {discovery_summary['pattern_analyzers']}")
+        print(f"   ⏰ Timeframe Analyzers: {discovery_summary['timeframe_analyzers']}")
+        
+        if discovery_summary['initialization_errors'] > 0:
+            print(f"   ⚠️  Discovery Warnings: {discovery_summary['initialization_errors']}")
+        
+        # Initialize the main components with enhanced error handling
+        self.stage_analyzer = None
+        self.pattern_detector = None
+        self.multi_tf_analyzer = None
+        self.pattern_analyzer = None
+        
         try:
-            # Get the enhanced components (backward compatibility)
+            # Initialize Enhanced Stage Analyzer
             if 'EnhancedStageAnalyzer' in self.component_registry.stage_analyzers:
-                self.stage_analyzer = self.component_registry.stage_analyzers['EnhancedStageAnalyzer'](self.blacklist_manager)
+                analyzer_class = self.component_registry.stage_analyzers['EnhancedStageAnalyzer']
+                self.stage_analyzer = analyzer_class(self.blacklist_manager)
+                
+                # CRITICAL FIX: Safe initialization after construction
+                if hasattr(self.stage_analyzer, 'safe_initialize'):
+                    init_success = self.stage_analyzer.safe_initialize()
+                    self.initialization_status['stage_analyzer'] = 'SUCCESS' if init_success else 'PARTIAL'
+                else:
+                    self.initialization_status['stage_analyzer'] = 'SUCCESS'
+                
+                logger.info("✅ EnhancedStageAnalyzer initialized successfully")
+            else:
+                self.initialization_status['stage_analyzer'] = 'MISSING'
+                logger.warning("⚠️  EnhancedStageAnalyzer not found")
             
+            # Initialize Advanced Pattern Detector
             if 'AdvancedPatternDetector' in self.component_registry.pattern_detectors:
-                self.pattern_detector = self.component_registry.pattern_detectors['AdvancedPatternDetector']()
+                detector_class = self.component_registry.pattern_detectors['AdvancedPatternDetector']
+                self.pattern_detector = detector_class()
+                self.initialization_status['pattern_detector'] = 'SUCCESS'
+                logger.info("✅ AdvancedPatternDetector initialized successfully")
+            else:
+                self.initialization_status['pattern_detector'] = 'MISSING'
+                logger.warning("⚠️  AdvancedPatternDetector not found")
             
+            # Initialize Enhanced Multi-Timeframe Analyzer (optional)
             if 'EnhancedMultiTimeframeAnalyzer' in self.component_registry.timeframe_analyzers:
-                self.multi_tf_analyzer = self.component_registry.timeframe_analyzers['EnhancedMultiTimeframeAnalyzer'](
-                    self.learning_system, self.blacklist_manager)
+                tf_analyzer_class = self.component_registry.timeframe_analyzers['EnhancedMultiTimeframeAnalyzer']
+                self.multi_tf_analyzer = tf_analyzer_class(self.learning_system, self.blacklist_manager)
+                self.initialization_status['multi_tf_analyzer'] = 'SUCCESS'
+                logger.info("✅ EnhancedMultiTimeframeAnalyzer initialized successfully")
+            else:
+                self.initialization_status['multi_tf_analyzer'] = 'MISSING'
+                logger.debug("ℹ️  EnhancedMultiTimeframeAnalyzer not found (optional)")
             
+            # Initialize Professional Pattern Analyzer
             if 'ProfessionalPatternAnalyzer' in self.component_registry.pattern_analyzers:
-                self.pattern_analyzer = self.component_registry.pattern_analyzers['ProfessionalPatternAnalyzer'](str(self.data_dir))
+                analyzer_class = self.component_registry.pattern_analyzers['ProfessionalPatternAnalyzer']
+                self.pattern_analyzer = analyzer_class(str(self.data_dir))
+                self.initialization_status['pattern_analyzer'] = 'SUCCESS'
+                logger.info("✅ ProfessionalPatternAnalyzer initialized successfully")
+            else:
+                self.initialization_status['pattern_analyzer'] = 'MISSING'
+                logger.warning("⚠️  ProfessionalPatternAnalyzer not found")
         
         except Exception as e:
-            logger.warning(f"Error initializing components: {e}")
+            error_msg = f"Error initializing components: {e}"
+            logger.warning(error_msg)
+            
+            # Enhanced error reporting
             print("⚠️  Some components failed to initialize - using fallback mode")
+            if logger.isEnabledFor(logging.DEBUG):
+                print(f"   Debug info: {error_msg}")
+                traceback.print_exc()
     
     def _find_crypto_path(self) -> Optional[Path]:
         """Find available crypto data path"""
@@ -549,37 +656,81 @@ class ProfessionalTradingOrchestrator:
     
     def run_analysis(self, market_type: MarketType = MarketType.BOTH,
                      max_symbols: int = None, num_processes: int = None) -> List[MultiTimeframeAnalysis]:
-        """Run the complete analysis using auto-discovered components"""
+        """Run the complete analysis using auto-discovered components with enhanced error handling"""
         
         print(f"\n🎮 {random.choice(GAME_MESSAGES)}")
         print(f"📊 Market: {market_type.value}")
         print(f"🧠 Learning from {len(self.learning_system.pattern_performance)} advanced patterns")
         
+        # Check component initialization status
+        failed_components = [name for name, status in self.initialization_status.items() 
+                           if status in ['MISSING', 'FAILED']]
+        
+        if failed_components:
+            print(f"⚠️  Warning: Some components not available: {', '.join(failed_components)}")
+            print("   System will use fallback methods where possible")
+        
         # Use the main pattern analyzer if available
-        if hasattr(self, 'pattern_analyzer'):
-            return self.pattern_analyzer.run_analysis(market_type, max_symbols, num_processes)
+        if hasattr(self, 'pattern_analyzer') and self.pattern_analyzer:
+            try:
+                return self.pattern_analyzer.run_analysis(market_type, max_symbols, num_processes)
+            except Exception as e:
+                logger.error(f"Pattern analyzer failed: {e}")
+                print(f"❌ Pattern analysis failed: {e}")
+                if logger.isEnabledFor(logging.DEBUG):
+                    traceback.print_exc()
+                return []
         else:
-            print("❌ No pattern analyzer available")
+            print("❌ No pattern analyzer available - cannot run analysis")
+            print("   Please ensure ProfessionalPatternAnalyzer is properly installed")
             return []
     
     def print_results(self):
         """Print results using available components"""
-        if hasattr(self, 'pattern_analyzer'):
-            self.pattern_analyzer.print_results()
+        if hasattr(self, 'pattern_analyzer') and self.pattern_analyzer:
+            try:
+                self.pattern_analyzer.print_results()
+            except Exception as e:
+                logger.error(f"Error printing results: {e}")
+                print(f"❌ Error displaying results: {e}")
         else:
-            print("❌ No results to display")
+            print("❌ No results to display - pattern analyzer not available")
     
     def save_results(self, filename: str = None):
         """Save results using available components"""
-        if hasattr(self, 'pattern_analyzer'):
-            self.pattern_analyzer.save_results(filename)
+        if hasattr(self, 'pattern_analyzer') and self.pattern_analyzer:
+            try:
+                self.pattern_analyzer.save_results(filename)
+            except Exception as e:
+                logger.error(f"Error saving results: {e}")
+                print(f"❌ Error saving results: {e}")
         else:
-            print("❌ No results to save")
+            print("❌ No results to save - pattern analyzer not available")
+    
+    def get_system_status(self) -> Dict[str, Any]:
+        """Get comprehensive system status"""
+        return {
+            'component_discovery': self.component_registry.get_discovery_summary(),
+            'initialization_status': self.initialization_status,
+            'data_paths': {
+                'crypto_path': str(self.crypto_path) if self.crypto_path else None,
+                'stock_paths': {k: str(v) for k, v in self.stock_paths.items()}
+            },
+            'blacklist_stats': {
+                'static_stocks': len(self.blacklist_manager.blacklisted_stocks),
+                'static_crypto': len(self.blacklist_manager.blacklisted_crypto),
+                'dynamic': len(self.blacklist_manager.dynamic_blacklist)
+            },
+            'learning_stats': {
+                'patterns_tracked': len(self.learning_system.pattern_performance),
+                'results_dir': str(self.learning_system.results_dir)
+            }
+        }
 
 
-# ================== MAIN EXECUTION ==================
+# ================== MAIN EXECUTION - ENHANCED ==================
 def main():
-    """Enhanced main execution with auto-discovery"""
+    """Enhanced main execution with auto-discovery and better error handling"""
     system_info = detect_m1_optimization()
 
     print("\n" + "=" * 100)
@@ -593,8 +744,15 @@ def main():
 
     print(f"\n{random.choice(GAME_MESSAGES)}")
 
-    # Initialize orchestrator
-    orchestrator = ProfessionalTradingOrchestrator()
+    # Initialize orchestrator with enhanced error handling
+    try:
+        orchestrator = ProfessionalTradingOrchestrator()
+    except Exception as e:
+        print(f"❌ Critical error initializing system: {e}")
+        if logger.isEnabledFor(logging.DEBUG):
+            traceback.print_exc()
+        print("\nPlease check your installation and try again.")
+        return
 
     # Show system info
     print(f"\n💻 System Detection:")
@@ -605,6 +763,15 @@ def main():
         print(f"   🚀 M1/M2 Detected: Optimal processes = {system_info['optimal_processes']}")
     else:
         print(f"   💻 Intel/AMD: Optimal processes = {system_info['optimal_processes']}")
+
+    # Show system status
+    try:
+        status = orchestrator.get_system_status()
+        if status['component_discovery']['initialization_errors'] > 0:
+            print(f"\n⚠️  System Status: {status['component_discovery']['initialization_errors']} component warnings")
+            print("   Analysis will continue with available components")
+    except Exception as e:
+        logger.debug(f"Error getting system status: {e}")
 
     print("\n📊 Select Your Professional Quest:")
     print("1. 🏮 Chinese A-Shares Professional Analysis")
@@ -672,23 +839,29 @@ def main():
         else:
             print(f"💻 Performance: Analysis completed in {analysis_time}")
 
-        orchestrator.print_results()
+        if results:
+            orchestrator.print_results()
 
-        save_choice = input("\n💾 Save professional analysis? (y/n): ").strip().lower()
-        if save_choice == 'y':
-            orchestrator.save_results()
+            save_choice = input("\n💾 Save professional analysis? (y/n): ").strip().lower()
+            if save_choice == 'y':
+                orchestrator.save_results()
 
-        print(f"\n🎮 MODULAR ANALYSIS COMPLETE!")
-        print(f"🏆 Discovered {len(results)} professional-grade opportunities!")
-        print(f"🔌 Plugin System: Ready for new components!")
+            print(f"\n🎮 MODULAR ANALYSIS COMPLETE!")
+            print(f"🏆 Discovered {len(results)} professional-grade opportunities!")
+            print(f"🔌 Plugin System: Ready for new components!")
+        else:
+            print(f"\n🔍 No opportunities found matching the criteria.")
+            print(f"💡 Try adjusting analysis parameters or check data availability.")
 
     except KeyboardInterrupt:
         print(f"\n\n⏸️  Analysis paused by user")
         print(f"💾 Partial results may be available")
     except Exception as e:
         print(f"\n❌ Analysis error: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.error(f"Analysis failed: {e}")
+        if logger.isEnabledFor(logging.DEBUG):
+            traceback.print_exc()
+        print("Please check logs for detailed error information.")
 
 
 if __name__ == "__main__":
@@ -699,6 +872,9 @@ if __name__ == "__main__":
         sys.exit(0)
     except Exception as e:
         logger.error(f"Professional analyzer crashed: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"\n❌ Critical system error: {e}")
+        if logger.isEnabledFor(logging.DEBUG):
+            import traceback
+            traceback.print_exc()
+        print("Please check your Python environment and dependencies.")
         sys.exit(1)
