@@ -18,9 +18,20 @@ import multiprocessing as mp
 from tabulate import tabulate
 
 from .base_pattern_analyzer import (
-    BasePatternAnalyzer, MultiTimeframeAnalysis, MarketType, TimeFrame, 
+    BasePatternAnalyzer, MultiTimeframeAnalysis, TimeFrame, 
     PatternType, ConsolidationType, PatternMaturity, StageResult, PatternCombination
 )
+
+# Import MarketType from main module to ensure enum consistency
+try:
+    from main import MarketType
+except ImportError:
+    # Fallback for when running as standalone
+    from enum import Enum
+    class MarketType(Enum):
+        CHINESE_STOCK = "Chinese A-Share"
+        CRYPTO = "Cryptocurrency"
+        BOTH = "Both Markets"
 
 warnings.filterwarnings('ignore')
 logger = logging.getLogger(__name__)
@@ -271,16 +282,12 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
         symbols = []
         total_files_found = 0
         
-        # DEBUG: Add comprehensive debugging
-        logger.info(f"🔍 get_all_symbols() called with market_type: {market_type}")
-        logger.info(f"🔍 market_type.value: {market_type.value}")
-        logger.info(f"🔍 MarketType.CHINESE_STOCK: {MarketType.CHINESE_STOCK}")
-        logger.info(f"🔍 MarketType.CHINESE_STOCK.value: {MarketType.CHINESE_STOCK.value}")
-        logger.info(f"🔍 Condition check: {market_type in [MarketType.CHINESE_STOCK, MarketType.BOTH]}")
+        # Process Chinese stocks - Enhanced enum comparison for robustness
+        is_chinese_market = (market_type in [MarketType.CHINESE_STOCK, MarketType.BOTH] or 
+                           market_type.value in ["Chinese A-Share", "Both Markets"])
         
-        if market_type in [MarketType.CHINESE_STOCK, MarketType.BOTH]:
+        if is_chinese_market:
             logger.info(f"🔍 Searching for Chinese stock data in: {self.data_dir}")
-            logger.info(f"🔍 self.stock_paths: {self.stock_paths}")
             
             for exchange, folder in self.stock_paths.items():
                 logger.info(f"📁 Checking {exchange} path: {folder}")
@@ -298,14 +305,13 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
                         if all_files:
                             logger.info(f"📋 Files present: {[f.name for f in all_files[:5]]}")
                     else:
-                        # DEBUG: Show sample files
-                        sample_files = [f.name for f in csv_files[:5]]
+                        # Sample CSV files found
+                        sample_files = [f.name for f in csv_files[:3]]
                         logger.info(f"📋 Sample CSV files: {sample_files}")
                     
                     for file_path in csv_files:
                         symbol = file_path.stem
                         is_blacklisted = self.blacklist_manager.is_blacklisted(symbol, MarketType.CHINESE_STOCK)
-                        logger.debug(f"🔍 Symbol {symbol}: blacklisted={is_blacklisted}")
                         
                         if not is_blacklisted:
                             symbols.append(symbol)
@@ -321,10 +327,12 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
                         logger.info(f"📂 Available subdirectories in {parent}: {subdirs}")
                     else:
                         logger.warning(f"❌ Parent directory also not found: {parent}")
-        else:
-            logger.warning(f"⚠️  Chinese stock processing skipped - market_type condition failed")
         
-        if market_type in [MarketType.CRYPTO, MarketType.BOTH]:
+        # Process Crypto - Enhanced enum comparison for robustness  
+        is_crypto_market = (market_type in [MarketType.CRYPTO, MarketType.BOTH] or 
+                          market_type.value in ["Cryptocurrency", "Both Markets"])
+        
+        if is_crypto_market:
             if self.crypto_path and self.crypto_path.exists():
                 logger.info(f"🪙 Loading crypto symbols from: {self.crypto_path}")
                 csv_files = list(self.crypto_path.glob("*.csv"))
