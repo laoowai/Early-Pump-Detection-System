@@ -10,6 +10,9 @@ from typing import Dict, List, Tuple, Any, Optional
 from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Import shared data structures
 class MarketType(Enum):
@@ -146,13 +149,22 @@ class BasePatternAnalyzer(ABC):
         self.results = []
         self.used_symbols = set()
         
-        # Setup data paths
+        # Setup data paths with enhanced validation
+        self._setup_data_paths()
+        
+        # Find crypto path with better error handling
+        self.crypto_path = self._find_crypto_path()
+    
+    def _setup_data_paths(self):
+        """Setup and validate data paths with enhanced error handling"""
+        # Stock paths
         self.stock_paths = {
             'shanghai': self.data_dir / 'shanghai_6xx',
             'shenzhen': self.data_dir / 'shenzhen_0xx',
             'beijing': self.data_dir / 'beijing_8xx'
         }
         
+        # Crypto paths (in order of preference)
         self.crypto_paths = [
             self.data_dir / 'huobi' / 'spot_usdt' / '1d',
             self.data_dir / 'huobi' / 'csv' / 'spot',
@@ -161,7 +173,94 @@ class BasePatternAnalyzer(ABC):
             self.data_dir / 'binance' / 'spot'
         ]
         
-        self.crypto_path = self._find_crypto_path()
+        # Enhanced path validation and logging
+        self._validate_data_paths()
+    
+    def _validate_data_paths(self):
+        """Validate data paths and provide detailed diagnostics"""
+        logger.info(f"🔍 Validating data paths from base directory: {self.data_dir}")
+        
+        # Check if base data directory exists
+        if not self.data_dir.exists():
+            logger.error(f"❌ Base data directory does not exist: {self.data_dir}")
+            logger.error(f"   Current working directory: {Path.cwd()}")
+            
+            # Try to find alternative data directories
+            possible_dirs = [
+                Path("data"),
+                Path("Chinese_Market") / "data",
+                Path("..") / "Chinese_Market" / "data",
+                Path(".") / "Chinese_Market" / "data"
+            ]
+            
+            logger.info("🔍 Searching for alternative data directories:")
+            for alt_dir in possible_dirs:
+                if alt_dir.exists():
+                    logger.info(f"   ✅ Found alternative: {alt_dir.absolute()}")
+                    contents = list(alt_dir.iterdir())[:5]
+                    logger.info(f"      Contents: {[item.name for item in contents]}")
+                else:
+                    logger.debug(f"   ❌ Not found: {alt_dir.absolute()}")
+        else:
+            logger.info(f"✅ Base data directory exists: {self.data_dir}")
+            
+            # List contents of base directory
+            try:
+                contents = list(self.data_dir.iterdir())
+                logger.info(f"📁 Contents: {[item.name for item in contents]}")
+            except PermissionError:
+                logger.error(f"❌ Permission denied accessing: {self.data_dir}")
+        
+        # Validate stock paths
+        logger.info("🏮 Checking Chinese stock directories:")
+        for exchange, path in self.stock_paths.items():
+            if path.exists():
+                csv_count = len(list(path.glob("*.csv")))
+                logger.info(f"   ✅ {exchange}: {path} ({csv_count} CSV files)")
+                
+                if csv_count == 0:
+                    # Check what files are actually there
+                    all_files = list(path.glob("*"))
+                    if all_files:
+                        file_types = {}
+                        for file in all_files[:10]:  # Check first 10 files
+                            ext = file.suffix.lower()
+                            file_types[ext] = file_types.get(ext, 0) + 1
+                        logger.warning(f"      📄 File types found: {file_types}")
+                    else:
+                        logger.warning(f"      📁 Directory is empty")
+            else:
+                logger.warning(f"   ❌ {exchange}: {path} (not found)")
+                
+                # Check if parent directory exists
+                parent = path.parent
+                if parent.exists():
+                    subdirs = [d.name for d in parent.iterdir() if d.is_dir()]
+                    logger.info(f"      📂 Available subdirectories in {parent}: {subdirs}")
+        
+        # Validate crypto paths
+        logger.info("🪙 Checking cryptocurrency directories:")
+        found_crypto = False
+        for i, path in enumerate(self.crypto_paths):
+            if path.exists():
+                csv_count = len(list(path.glob("*.csv")))
+                logger.info(f"   ✅ Path {i+1}: {path} ({csv_count} CSV files)")
+                found_crypto = True
+                
+                if csv_count == 0:
+                    # Check what files are actually there
+                    all_files = list(path.glob("*"))
+                    if all_files:
+                        file_types = {}
+                        for file in all_files[:10]:
+                            ext = file.suffix.lower()
+                            file_types[ext] = file_types.get(ext, 0) + 1
+                        logger.info(f"      📄 File types found: {file_types}")
+            else:
+                logger.debug(f"   ❌ Path {i+1}: {path} (not found)")
+        
+        if not found_crypto:
+            logger.warning("⚠️  No cryptocurrency data directories found")
     
     @abstractmethod
     def analyze_symbol(self, symbol: str, market_type: MarketType) -> Optional[MultiTimeframeAnalysis]:
@@ -208,7 +307,7 @@ class BasePatternAnalyzer(ABC):
     
     def load_data(self, symbol: str, market_type: MarketType) -> Optional[pd.DataFrame]:
         """
-        Load data for a given symbol
+        Load data for a given symbol with enhanced error handling
         
         Args:
             symbol: Symbol to load data for
@@ -218,8 +317,11 @@ class BasePatternAnalyzer(ABC):
             DataFrame with OHLCV data or None if loading fails
         """
         try:
+            file_path = None
+            
             if market_type == MarketType.CRYPTO:
                 if not self.crypto_path:
+                    logger.debug(f"No crypto path available for {symbol}")
                     return None
                 
                 # Multiple naming conventions
@@ -231,7 +333,6 @@ class BasePatternAnalyzer(ABC):
                     f"{symbol.replace('_USDT', '')}_USDT.csv"
                 ]
                 
-                file_path = None
                 for name in possible_names:
                     test_path = self.crypto_path / name
                     if test_path.exists():
@@ -239,58 +340,173 @@ class BasePatternAnalyzer(ABC):
                         break
                 
                 if not file_path:
+                    logger.debug(f"Crypto file not found for {symbol} in {self.crypto_path}")
                     return None
             else:
-                file_path = None
-                for folder in self.stock_paths.values():
+                # Chinese stock data
+                for exchange, folder in self.stock_paths.items():
+                    if not folder.exists():
+                        continue
+                    
                     test_path = folder / f"{symbol}.csv"
                     if test_path.exists():
                         file_path = test_path
                         break
                 
                 if not file_path:
+                    logger.debug(f"Stock file not found for {symbol}")
                     return None
             
             # Load and clean data
-            df = pd.read_csv(file_path, index_col=0, parse_dates=True)
+            logger.debug(f"Loading data from: {file_path}")
             
-            # Column standardization
-            column_mapping = {
-                'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close',
-                'volume': 'Volume', 'Open': 'Open', 'High': 'High', 'Low': 'Low',
-                'Close': 'Close', 'Volume': 'Volume'
-            }
+            try:
+                df = pd.read_csv(file_path, index_col=0, parse_dates=True)
+            except Exception as e:
+                logger.debug(f"Error reading CSV {file_path}: {e}")
+                # Try without parsing dates
+                try:
+                    df = pd.read_csv(file_path, index_col=0)
+                except Exception as e2:
+                    logger.debug(f"Error reading CSV without date parsing {file_path}: {e2}")
+                    return None
+            
+            # Enhanced column standardization
+            column_mapping = {}
+            for col in df.columns:
+                col_lower = col.lower().strip()
+                if col_lower in ['open', '开盘价', 'open_price']:
+                    column_mapping[col] = 'Open'
+                elif col_lower in ['high', '最高价', 'high_price']:
+                    column_mapping[col] = 'High'
+                elif col_lower in ['low', '最低价', 'low_price']:
+                    column_mapping[col] = 'Low'
+                elif col_lower in ['close', '收盘价', 'close_price']:
+                    column_mapping[col] = 'Close'
+                elif col_lower in ['volume', '成交量', 'vol', 'volume_quote']:
+                    column_mapping[col] = 'Volume'
             
             df = df.rename(columns=column_mapping)
             
+            # Check for required columns
             required_columns = ['Open', 'High', 'Low', 'Close']
-            if not all(col in df.columns for col in required_columns):
+            missing_columns = [col for col in required_columns if col not in df.columns]
+            
+            if missing_columns:
+                logger.debug(f"Missing required columns for {symbol}: {missing_columns}")
+                logger.debug(f"Available columns: {list(df.columns)}")
                 return None
             
-            # Data cleaning
-            df = df.sort_index()
+            # Enhanced data cleaning
+            original_length = len(df)
+            
+            # Sort by index (date)
+            try:
+                df = df.sort_index()
+            except Exception:
+                logger.debug(f"Could not sort by index for {symbol}")
+            
+            # Remove rows with NaN values in required columns
             df = df.dropna(subset=required_columns)
+            
+            # Remove rows with non-positive values
             df = df[(df[required_columns] > 0).all(axis=1)]
             
-            # Remove extreme outliers
+            # Remove extreme outliers (more than 3 standard deviations)
             for col in required_columns:
-                q99 = df[col].quantile(0.99)
-                q01 = df[col].quantile(0.01)
-                df = df[(df[col] >= q01) & (df[col] <= q99)]
+                if len(df) > 10:  # Only if we have enough data
+                    mean_val = df[col].mean()
+                    std_val = df[col].std()
+                    if std_val > 0:
+                        lower_bound = mean_val - 3 * std_val
+                        upper_bound = mean_val + 3 * std_val
+                        df = df[(df[col] >= lower_bound) & (df[col] <= upper_bound)]
             
+            # Clean volume data if available
             if 'Volume' in df.columns:
-                df = df[df['Volume'] > 0]
+                df = df[df['Volume'] >= 0]  # Allow zero volume, but not negative
             
-            return df if len(df) >= 30 else None
+            final_length = len(df)
+            if original_length > final_length:
+                logger.debug(f"Cleaned data for {symbol}: {original_length} → {final_length} rows")
+            
+            # Check minimum data requirements
+            min_required_length = 30
+            if len(df) < min_required_length:
+                logger.debug(f"Insufficient data for {symbol}: {len(df)} rows (minimum: {min_required_length})")
+                return None
+            
+            # Validate data integrity
+            if not self._validate_data_integrity(df, symbol):
+                return None
+            
+            logger.debug(f"Successfully loaded {symbol}: {len(df)} rows, columns: {list(df.columns)}")
+            return df
             
         except Exception as e:
+            logger.debug(f"Unexpected error loading data for {symbol}: {e}")
             return None
     
+    def _validate_data_integrity(self, df: pd.DataFrame, symbol: str) -> bool:
+        """Validate data integrity with enhanced checks"""
+        try:
+            # Check for basic data sanity
+            required_columns = ['Open', 'High', 'Low', 'Close']
+            
+            for col in required_columns:
+                if col not in df.columns:
+                    logger.debug(f"Missing column {col} for {symbol}")
+                    return False
+                
+                if df[col].isnull().any():
+                    logger.debug(f"Null values in {col} for {symbol}")
+                    return False
+                
+                if (df[col] <= 0).any():
+                    logger.debug(f"Non-positive values in {col} for {symbol}")
+                    return False
+            
+            # Check OHLC relationships
+            invalid_ohlc = (
+                (df['High'] < df['Low']) |
+                (df['High'] < df['Open']) |
+                (df['High'] < df['Close']) |
+                (df['Low'] > df['Open']) |
+                (df['Low'] > df['Close'])
+            ).any()
+            
+            if invalid_ohlc:
+                logger.debug(f"Invalid OHLC relationships for {symbol}")
+                return False
+            
+            # Check for reasonable price variations
+            price_changes = df['Close'].pct_change().abs()
+            extreme_changes = (price_changes > 0.5).sum()  # More than 50% change
+            
+            if extreme_changes > len(df) * 0.1:  # More than 10% of data points
+                logger.debug(f"Too many extreme price changes for {symbol}: {extreme_changes}")
+                return False
+            
+            return True
+            
+        except Exception as e:
+            logger.debug(f"Error validating data integrity for {symbol}: {e}")
+            return False
+    
     def _find_crypto_path(self) -> Optional[Path]:
-        """Find available crypto data path"""
-        for path in self.crypto_paths:
+        """Find available crypto data path with enhanced detection"""
+        logger.debug("🔍 Searching for crypto data directories...")
+        
+        for i, path in enumerate(self.crypto_paths):
+            logger.debug(f"   Checking path {i+1}: {path}")
             if path.exists():
+                csv_files = list(path.glob("*.csv"))
+                logger.info(f"✅ Found crypto data at: {path} ({len(csv_files)} CSV files)")
                 return path
+            else:
+                logger.debug(f"   ❌ Path does not exist: {path}")
+        
+        logger.warning("⚠️  No crypto data path found")
         return None
     
     def validate_data(self, df: pd.DataFrame) -> bool:
@@ -366,6 +582,7 @@ class BasePatternAnalyzer(ABC):
             
             return metrics
         except Exception as e:
+            logger.debug(f"Error calculating basic metrics: {e}")
             return {'error': str(e)}
     
     def print_results(self):
