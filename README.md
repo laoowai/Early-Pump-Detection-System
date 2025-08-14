@@ -7,6 +7,8 @@
 
 A **Professional-Grade Trading Analysis System** designed for detecting early pump opportunities in Chinese A-shares and cryptocurrency markets. Features game-like scoring, M1 MacBook optimization, and institutional-quality pattern recognition with an auto-discovery modular architecture.
 
+#@Chinese-Market #@Cryptocurrency
+
 ## 🌟 Key Features
 
 ### 🎯 Core Capabilities
