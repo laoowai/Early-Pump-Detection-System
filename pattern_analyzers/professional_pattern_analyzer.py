@@ -271,8 +271,16 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
         symbols = []
         total_files_found = 0
         
+        # DEBUG: Add comprehensive debugging
+        logger.info(f"🔍 get_all_symbols() called with market_type: {market_type}")
+        logger.info(f"🔍 market_type.value: {market_type.value}")
+        logger.info(f"🔍 MarketType.CHINESE_STOCK: {MarketType.CHINESE_STOCK}")
+        logger.info(f"🔍 MarketType.CHINESE_STOCK.value: {MarketType.CHINESE_STOCK.value}")
+        logger.info(f"🔍 Condition check: {market_type in [MarketType.CHINESE_STOCK, MarketType.BOTH]}")
+        
         if market_type in [MarketType.CHINESE_STOCK, MarketType.BOTH]:
             logger.info(f"🔍 Searching for Chinese stock data in: {self.data_dir}")
+            logger.info(f"🔍 self.stock_paths: {self.stock_paths}")
             
             for exchange, folder in self.stock_paths.items():
                 logger.info(f"📁 Checking {exchange} path: {folder}")
@@ -289,10 +297,17 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
                         all_files = list(folder.glob("*"))
                         if all_files:
                             logger.info(f"📋 Files present: {[f.name for f in all_files[:5]]}")
+                    else:
+                        # DEBUG: Show sample files
+                        sample_files = [f.name for f in csv_files[:5]]
+                        logger.info(f"📋 Sample CSV files: {sample_files}")
                     
                     for file_path in csv_files:
                         symbol = file_path.stem
-                        if not self.blacklist_manager.is_blacklisted(symbol, MarketType.CHINESE_STOCK):
+                        is_blacklisted = self.blacklist_manager.is_blacklisted(symbol, MarketType.CHINESE_STOCK)
+                        logger.debug(f"🔍 Symbol {symbol}: blacklisted={is_blacklisted}")
+                        
+                        if not is_blacklisted:
                             symbols.append(symbol)
                         else:
                             logger.debug(f"🚫 Blacklisted symbol: {symbol}")
@@ -306,6 +321,8 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
                         logger.info(f"📂 Available subdirectories in {parent}: {subdirs}")
                     else:
                         logger.warning(f"❌ Parent directory also not found: {parent}")
+        else:
+            logger.warning(f"⚠️  Chinese stock processing skipped - market_type condition failed")
         
         if market_type in [MarketType.CRYPTO, MarketType.BOTH]:
             if self.crypto_path and self.crypto_path.exists():
