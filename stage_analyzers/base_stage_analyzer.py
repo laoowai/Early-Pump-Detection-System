@@ -29,14 +29,25 @@ class BaseStageAnalyzer(ABC):
     All stage analyzers must inherit from this class and implement:
     - run_all_stages() method
     - get_supported_stages() method
+    
+    CRITICAL FIX: Improved initialization order to prevent attribute errors
     """
     
     def __init__(self, blacklist_manager=None):
         self.name = self.__class__.__name__
-        self.version = "1.0"
+        self.version = getattr(self, 'version', "1.0")  # Allow child to set version first
         self.blacklist_manager = blacklist_manager
-        self.supported_stages = self.get_supported_stages()
         self.stage_top_stocks = defaultdict(list)
+        
+        # CRITICAL FIX: Safe initialization of supported_stages
+        # Try to get supported stages, but handle gracefully if child hasn't set them yet
+        try:
+            self.supported_stages = self.get_supported_stages()
+        except (AttributeError, NotImplementedError) as e:
+            # If child class hasn't implemented get_supported_stages yet, provide empty list
+            self.supported_stages = []
+            # Log the issue but don't crash
+            print(f"Warning: {self.name} hasn't properly implemented get_supported_stages(): {e}")
     
     @abstractmethod
     def run_all_stages(self, df: pd.DataFrame, symbol: str = "", is_crypto: bool = False) -> List[StageResult]:
@@ -77,7 +88,7 @@ class BaseStageAnalyzer(ABC):
         Returns:
             StageResult object
         """
-        if stage_name not in self.supported_stages:
+        if not self.supported_stages or stage_name not in self.supported_stages:
             return StageResult(
                 stage_name, False, 0.0, 
                 {"error": f"Stage {stage_name} not supported by {self.name}"}, 
@@ -114,9 +125,10 @@ class BaseStageAnalyzer(ABC):
         return {
             "name": self.name,
             "version": self.version,
-            "supported_stages": self.supported_stages,
-            "stage_count": len(self.supported_stages),
-            "description": self.__doc__ or "No description available"
+            "supported_stages": self.supported_stages if hasattr(self, 'supported_stages') else [],
+            "stage_count": len(self.supported_stages) if hasattr(self, 'supported_stages') else 0,
+            "description": self.__doc__ or "No description available",
+            "initialization_status": "OK" if hasattr(self, 'supported_stages') and self.supported_stages else "PARTIAL"
         }
     
     def validate_data(self, df: pd.DataFrame) -> bool:
@@ -129,21 +141,24 @@ class BaseStageAnalyzer(ABC):
         Returns:
             True if data is valid, False otherwise
         """
-        required_columns = ['Open', 'High', 'Low', 'Close']
-        
-        if not all(col in df.columns for col in required_columns):
+        try:
+            required_columns = ['Open', 'High', 'Low', 'Close']
+            
+            if not all(col in df.columns for col in required_columns):
+                return False
+            
+            if len(df) < 10:  # Minimum data points
+                return False
+            
+            if df[required_columns].isnull().any().any():
+                return False
+            
+            if (df[required_columns] <= 0).any().any():
+                return False
+            
+            return True
+        except Exception:
             return False
-        
-        if len(df) < 10:  # Minimum data points
-            return False
-        
-        if df[required_columns].isnull().any().any():
-            return False
-        
-        if (df[required_columns] <= 0).any().any():
-            return False
-        
-        return True
     
     def calculate_technical_indicators(self, df: pd.DataFrame) -> Dict[str, pd.Series]:
         """
@@ -503,8 +518,25 @@ class BaseStageAnalyzer(ABC):
                 'accumulation_score': 0.5
             }
     
+    def safe_initialize(self) -> bool:
+        """
+        Safe initialization method that can be called after child initialization
+        
+        Returns:
+            True if initialization successful, False otherwise
+        """
+        try:
+            if not hasattr(self, 'supported_stages') or not self.supported_stages:
+                self.supported_stages = self.get_supported_stages()
+            return True
+        except Exception as e:
+            print(f"Warning: Failed to safely initialize {self.name}: {e}")
+            return False
+    
     def __str__(self) -> str:
-        return f"{self.name} v{self.version} - {len(self.supported_stages)} stages"
+        stage_count = len(self.supported_stages) if hasattr(self, 'supported_stages') else 0
+        return f"{self.name} v{self.version} - {stage_count} stages"
     
     def __repr__(self) -> str:
-        return f"<{self.name}(stages={len(self.supported_stages)})>"
+        stage_count = len(self.supported_stages) if hasattr(self, 'supported_stages') else 0
+        return f"<{self.name}(stages={stage_count})>"
