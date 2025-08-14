@@ -267,26 +267,52 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
             logger.warning("Falling back to standalone mode")
     
     def get_all_symbols(self, market_type: MarketType) -> List[str]:
-        """Get all available symbols for analysis"""
+        """Get all available symbols for analysis with enhanced error handling"""
         symbols = []
+        total_files_found = 0
         
         if market_type in [MarketType.CHINESE_STOCK, MarketType.BOTH]:
+            logger.info(f"🔍 Searching for Chinese stock data in: {self.data_dir}")
+            
             for exchange, folder in self.stock_paths.items():
+                logger.info(f"📁 Checking {exchange} path: {folder}")
+                
                 if folder.exists():
-                    logger.info(f"Loading {exchange} stocks from: {folder}")
+                    logger.info(f"✅ Found {exchange} directory: {folder}")
                     csv_files = list(folder.glob("*.csv"))
-                    logger.info(f"Found {len(csv_files)} files in {exchange}")
+                    total_files_found += len(csv_files)
+                    logger.info(f"📄 Found {len(csv_files)} CSV files in {exchange}")
+                    
+                    if len(csv_files) == 0:
+                        logger.warning(f"⚠️  No CSV files found in {folder}")
+                        # List what files are actually there
+                        all_files = list(folder.glob("*"))
+                        if all_files:
+                            logger.info(f"📋 Files present: {[f.name for f in all_files[:5]]}")
                     
                     for file_path in csv_files:
                         symbol = file_path.stem
                         if not self.blacklist_manager.is_blacklisted(symbol, MarketType.CHINESE_STOCK):
                             symbols.append(symbol)
+                        else:
+                            logger.debug(f"🚫 Blacklisted symbol: {symbol}")
+                else:
+                    logger.warning(f"❌ Directory not found: {folder}")
+                    
+                    # Check parent directory
+                    parent = folder.parent
+                    if parent.exists():
+                        subdirs = [d.name for d in parent.iterdir() if d.is_dir()]
+                        logger.info(f"📂 Available subdirectories in {parent}: {subdirs}")
+                    else:
+                        logger.warning(f"❌ Parent directory also not found: {parent}")
         
         if market_type in [MarketType.CRYPTO, MarketType.BOTH]:
             if self.crypto_path and self.crypto_path.exists():
-                logger.info(f"Loading crypto symbols from: {self.crypto_path}")
+                logger.info(f"🪙 Loading crypto symbols from: {self.crypto_path}")
                 csv_files = list(self.crypto_path.glob("*.csv"))
-                logger.info(f"Found {len(csv_files)} crypto files")
+                total_files_found += len(csv_files)
+                logger.info(f"📄 Found {len(csv_files)} crypto files")
                 
                 for file_path in csv_files:
                     symbol = file_path.stem
@@ -294,9 +320,33 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
                     if not self.blacklist_manager.is_blacklisted(check_symbol, MarketType.CRYPTO):
                         symbols.append(symbol)
             else:
-                logger.warning(f"Crypto path not found or doesn't exist: {self.crypto_path}")
+                logger.warning(f"❌ Crypto path not found or doesn't exist: {self.crypto_path}")
         
-        logger.info(f"Total symbols collected: {len(symbols)}")
+        logger.info(f"📊 Total files found: {total_files_found}")
+        logger.info(f"📈 Total symbols collected: {len(symbols)}")
+        
+        # Enhanced diagnostics when no symbols found
+        if len(symbols) == 0:
+            logger.error("🚨 NO SYMBOLS FOUND - DIAGNOSTIC INFORMATION:")
+            logger.error(f"   Data directory: {self.data_dir}")
+            logger.error(f"   Data directory exists: {self.data_dir.exists()}")
+            
+            if self.data_dir.exists():
+                contents = list(self.data_dir.iterdir())
+                logger.error(f"   Contents: {[item.name for item in contents]}")
+            
+            logger.error("   Expected structure:")
+            logger.error("   Chinese_Market/data/shanghai_6xx/*.csv")
+            logger.error("   Chinese_Market/data/shenzhen_0xx/*.csv")
+            logger.error("   Chinese_Market/data/huobi/spot_usdt/1d/*.csv")
+            
+            # Provide helpful suggestions
+            logger.error("💡 SUGGESTIONS:")
+            logger.error("   1. Check if data files exist in the expected directories")
+            logger.error("   2. Verify CSV file format and naming")
+            logger.error("   3. Ensure proper file permissions")
+            logger.error("   4. Try running from the correct working directory")
+        
         return list(set(symbols))
     
     def analyze_symbol(self, symbol: str, market_type: MarketType) -> Optional[MultiTimeframeAnalysis]:
@@ -431,7 +481,7 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
     
     def run_analysis(self, market_type: MarketType = MarketType.BOTH,
                      max_symbols: int = None, num_processes: int = None) -> List[MultiTimeframeAnalysis]:
-        """Run comprehensive analysis with M1-optimized parallel processing"""
+        """Run comprehensive analysis with M1-optimized parallel processing and enhanced error handling"""
         # Try to import from main module for system optimization
         try:
             from main import detect_m1_optimization
@@ -449,6 +499,14 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
         print(f"🧠 Learning from {len(self.learning_system.pattern_performance)} advanced patterns")
         
         symbols = self.get_all_symbols(market_type)
+        
+        # CRITICAL FIX: Handle zero symbols case
+        if len(symbols) == 0:
+            print(f"❌ No symbols found for analysis!")
+            print(f"🔍 Market type: {market_type.value}")
+            print(f"📁 Data directory: {self.data_dir}")
+            print(f"💡 Please check that data files exist in the expected directory structure.")
+            return []
         
         # IMPROVED: Better limit handling
         if max_symbols and max_symbols < len(symbols):
@@ -555,7 +613,7 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
                     results.extend(batch_results)
         else:
             # Sequential processing for very small datasets
-            print(f"📝 Sequential processing for {len(symbols)} symbols")
+            print(f"🔄 Sequential processing for {len(symbols)} symbols")
             for i, symbol in enumerate(symbols):
                 if i % 50 == 0:
                     progress_pct = (i / len(symbols)) * 100
@@ -583,7 +641,13 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
         print(f"   📈 Total Processed: {len(symbols)}")
         print(f"   ✅ Successful: {successful_analyses}")
         print(f"   ❌ Failed/Filtered: {failed_analyses}")
-        print(f"   📊 Success Rate: {(successful_analyses / len(symbols) * 100):.1f}%")
+        
+        # CRITICAL FIX: Prevent division by zero
+        if len(symbols) > 0:
+            success_rate = (successful_analyses / len(symbols) * 100)
+            print(f"   📊 Success Rate: {success_rate:.1f}%")
+        else:
+            print(f"   📊 Success Rate: N/A (no symbols processed)")
         
         # Performance metrics
         if system_info['is_m1']:
@@ -628,7 +692,7 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
         return predictions[:top_n]
     
     def print_results(self):
-        """Enhanced results display"""
+        """Enhanced results display with better error handling"""
         if not self.results:
             print("\n❌ No patterns found")
             self._print_troubleshooting_guide()
@@ -851,7 +915,7 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
             return {'rsi': 50.0, 'macd': 0.0}
     
     def _print_troubleshooting_guide(self):
-        """Print troubleshooting information"""
+        """Print enhanced troubleshooting information"""
         print("\n💡 TROUBLESHOOTING GUIDE:")
         print("   • Check data file paths and formats")
         print(f"   • Crypto path: {self.crypto_path}")
@@ -859,6 +923,13 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
         print("   • Ensure minimum 60-120 days of data per symbol")
         print("   • Try lowering quality thresholds in settings")
         print("   • Check for data file corruption or format issues")
+        print("\n🔍 DATA DIRECTORY VERIFICATION:")
+        print(f"   • Working directory: {Path.cwd()}")
+        print(f"   • Data directory: {self.data_dir}")
+        print(f"   • Data directory exists: {self.data_dir.exists()}")
+        if self.data_dir.exists():
+            contents = list(self.data_dir.iterdir())
+            print(f"   • Directory contents: {[item.name for item in contents[:10]]}")
     
     def _print_advanced_pattern_stats(self):
         """Print advanced pattern statistics"""
