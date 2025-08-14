@@ -193,6 +193,27 @@ Early-Pump-Detection-System/
 │   ├── test_requirements()        # Validate requirements.txt content
 │   ├── test_readme_content()      # Validate README completeness
 │   └── run_validation()           # Execute all validation tests
+├── 🎮 EPDScanner.py                # Pattern Analyzer Game v6.0 - Professional Trading Edition
+│   ├── ProfessionalTradingOrchestrator # Enhanced pattern analysis orchestrator
+│   ├── AdvancedPatternDetector    # 20+ advanced pattern detection algorithms
+│   ├── EnhancedStageAnalyzer      # 7-stage analysis pipeline
+│   ├── ProfessionalLearningSystem # ML-inspired pattern learning
+│   ├── EnhancedBlacklistManager   # Dynamic blacklist management
+│   └── ComponentRegistry          # Auto-discovery component registry
+├── 📊 EPDStocksUpdater.py          # Chinese A-Share Data Manager v6.0 - Production Ready
+│   ├── ChineseStockManager        # Main stock data management class
+│   ├── FileAnalyzer               # Stock data file analysis and quality assessment
+│   ├── DataSourceManager          # Multi-source data collection with fallback
+│   ├── StockDataUpdater           # High-performance data updating with retry logic
+│   ├── Config                     # Production-ready configuration management
+│   └── migrate_to_organized_structure() # Directory organization and file migration
+├── 🚀 EPDHuobiUpdater.py           # HTX Crypto Data Collector v5.0 - High-Speed Edition
+│   ├── HighSpeedDataCollector     # Parallel cryptocurrency data collection
+│   ├── HTXAPIClient               # HTX API client with authentication
+│   ├── CCXTDataCollector          # Multi-exchange data collector with fallback
+│   ├── HTXSigner                  # HTX API request authentication
+│   └── Config                     # High-performance collection configuration
+├── ⚙️ htx_config.json              # HTX/Huobi API configuration and settings
 ├── 🚫 .gitignore                   # Git ignore patterns for clean repository
 ├── 📚 docs/                        # Comprehensive documentation
 │   ├── 📖 installation.md          # Detailed installation and setup guide
@@ -270,6 +291,19 @@ Early-Pump-Detection-System/
   - **Key Functions**: `show_system_overview()`, `show_project_structure()`, `show_quick_start()`, `show_grading_system()`
 - **`validate_setup.py`**: Comprehensive validation script for system setup verification
   - **Key Functions**: `test_project_structure()`, `test_documentation()`, `test_python_syntax()`, `run_validation()`
+
+#### Data Collection Tools
+- **`EPDScanner.py`**: Pattern Analyzer Game v6.0 - Professional Trading Edition with enhanced 20+ pattern detection
+  - **Key Classes**: `ProfessionalTradingOrchestrator`, `AdvancedPatternDetector`, `EnhancedStageAnalyzer`, `ProfessionalLearningSystem`
+  - **Key Features**: Auto-discovery architecture, M1/M2 optimization, professional grading system, multi-market support
+- **`EPDStocksUpdater.py`**: Chinese A-Share Data Manager v6.0 - Production-ready stock data collection and management
+  - **Key Classes**: `ChineseStockManager`, `FileAnalyzer`, `DataSourceManager`, `StockDataUpdater`
+  - **Key Features**: Multi-source data collection, intelligent retry logic, organized directory structure, data quality assessment
+- **`EPDHuobiUpdater.py`**: HTX Crypto Data Collector v5.0 - High-speed cryptocurrency data collection
+  - **Key Classes**: `HighSpeedDataCollector`, `HTXAPIClient`, `CCXTDataCollector`, `HTXSigner`
+  - **Key Features**: Parallel processing, API authentication, multi-exchange support, concurrent data fetching
+- **`htx_config.json`**: HTX/Huobi API configuration file with credentials and collection settings
+  - **Configuration**: API keys, data directories, intervals, currencies, volume thresholds
 
 #### Analysis Components (Auto-Discovery Architecture)
 

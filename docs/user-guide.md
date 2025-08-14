@@ -328,6 +328,126 @@ export EPDS_PROCESSES=4
 - STEALTH MODE patterns prominent
 - Selective opportunities
 
+## 📊 Data Collection Tools
+
+### EPDScanner.py - Pattern Analyzer Game v6.0
+
+The EPDScanner provides a game-like interface for pattern analysis with 20+ advanced algorithms.
+
+#### Basic Usage
+```bash
+python EPDScanner.py
+```
+
+#### Key Features
+- **Interactive Game Interface**: Engaging pattern analysis experience
+- **Professional Grading**: Institutional/Professional/Intermediate classifications
+- **M1/M2 Optimization**: Automatic Apple Silicon performance enhancement
+- **Multi-Market Analysis**: Chinese stocks + Cryptocurrency support
+- **Real-time Learning**: Adaptive pattern recognition system
+
+#### Configuration Options
+```python
+# Configure analysis parameters
+config = {
+    'enable_m1_optimization': True,
+    'min_grade_threshold': 75,
+    'blacklist_enabled': True,
+    'learning_mode': True
+}
+```
+
+### EPDStocksUpdater.py - Chinese A-Share Data Manager
+
+Comprehensive tool for managing Chinese stock market data collection.
+
+#### Basic Usage
+```bash
+python EPDStocksUpdater.py
+```
+
+#### Interactive Menu Options
+1. **📊 Analyze existing files** - Assess data quality and coverage
+2. **🔄 Update all data** - Refresh stock data with intelligent retry
+3. **🎯 Update specific symbols** - Target specific stocks for updates
+4. **🗂️ Migrate to organized structure** - Organize files by exchange
+5. **📈 Quick market overview** - Current market status and statistics
+
+#### Advanced Features
+```python
+# Custom configuration
+config = Config(
+    base_dir="Chinese_Market",
+    enable_organized_structure=True,
+    max_concurrent_downloads=10,
+    enable_circuit_breaker=True,
+    max_retries=3
+)
+
+# Run programmatically
+manager = ChineseStockManager(config)
+manager.update_all_stocks()
+```
+
+### EPDHuobiUpdater.py - HTX Crypto Data Collector
+
+High-speed cryptocurrency data collection from HTX/Huobi and other exchanges.
+
+#### Setup Configuration
+First, configure your HTX API credentials in `htx_config.json`:
+```json
+{
+  "htx_access_key": "your_access_key",
+  "htx_secret_key": "your_secret_key",
+  "base_dir": "Market_Data",
+  "enable_crypto": true,
+  "crypto_intervals": ["1min", "60min", "1day"],
+  "min_volume_threshold": 10000
+}
+```
+
+#### Basic Usage
+```bash
+python EPDHuobiUpdater.py
+```
+
+#### Advanced Usage
+```python
+# High-speed parallel collection
+collector = HighSpeedDataCollector(config)
+collector.collect_all_usdt_pairs()
+
+# Specific symbol collection
+collector.collect_symbol_data("BTC-USDT", "1day")
+```
+
+#### Supported Features
+- **Multiple Exchanges**: HTX, Binance, OKX (via CCXT)
+- **Parallel Processing**: Concurrent data fetching
+- **API Authentication**: HTX API key support for higher rate limits
+- **Smart Caching**: Avoid re-downloading existing data
+- **Automatic Retry**: Intelligent error handling and recovery
+
+### Data Organization
+
+All tools organize data in a consistent structure:
+```
+Chinese_Market/data/
+├── shanghai_6xx/          # Shanghai Stock Exchange
+├── shenzhen_0xx/          # Shenzhen Stock Exchange  
+├── beijing_8xx/           # Beijing Stock Exchange
+└── huobi/                 # Cryptocurrency data
+    └── spot_usdt/1d/      # Daily USDT pairs
+```
+
+### Best Practices
+
+1. **Regular Updates**: Run data collection tools daily for fresh data
+2. **Monitor Logs**: Check logs directory for error analysis
+3. **API Limits**: Configure appropriate rate limits for your API tier
+4. **Data Quality**: Use file analysis features to assess data completeness
+5. **Backup Strategy**: Regular backups of collected data
+
 ## 🎯 Trading Strategies by Pattern
 
 ### For ACCUMULATION ZONE 🔥

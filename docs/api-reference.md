@@ -787,6 +787,218 @@ for symbol in symbols:
         logger.error(f"Failed to analyze {symbol}: {e}")
 ```
 
+## EPD Data Collection Tools API Reference
+
+### EPDScanner.py - Pattern Analyzer Game v6.0
+
+#### Core Classes
+
+##### ProfessionalTradingOrchestrator
+Enhanced orchestrator for pattern analysis with auto-discovery architecture.
+
+```python
+class ProfessionalTradingOrchestrator:
+    def __init__(self, data_dir: str = "Chinese_Market/data"):
+        """Initialize orchestrator with auto-discovery"""
+        
+    def detect_m1_optimization(self) -> int:
+        """Detect M1/M2 MacBook optimization and return process multiplier"""
+        
+    def run_analysis(self, symbols: List[str] = None) -> List[AnalysisResult]:
+        """Run comprehensive pattern analysis"""
+        
+    def display_results(self, results: List[AnalysisResult]):
+        """Display analysis results with professional grading"""
+```
+
+##### ComponentRegistry
+Auto-discovery system for pattern analysis components.
+
+```python
+class ComponentRegistry:
+    def auto_discover_all_components(self):
+        """Automatically discover all pattern analysis components"""
+        
+    def get_pattern_analyzers(self) -> List[BasePatternAnalyzer]:
+        """Get all discovered pattern analyzers"""
+        
+    def get_pattern_detectors(self) -> List[BasePatternDetector]:
+        """Get all discovered pattern detectors"""
+```
+
+### EPDStocksUpdater.py - Chinese A-Share Data Manager v6.0
+
+#### Core Classes
+
+##### ChineseStockManager
+Main class for Chinese stock data management and collection.
+
+```python
+class ChineseStockManager:
+    def __init__(self, config: Config):
+        """Initialize with production-ready configuration"""
+        
+    def update_all_stocks(self) -> Dict[str, Any]:
+        """Update all Chinese stock data with intelligent retry"""
+        
+    def update_specific_symbols(self, symbols: List[str]) -> Dict[str, Any]:
+        """Update specific stock symbols"""
+        
+    def analyze_existing_files(self) -> Dict[str, Any]:
+        """Analyze existing data files for quality assessment"""
+        
+    def migrate_to_organized_structure(self) -> Dict[str, int]:
+        """Migrate files to organized directory structure"""
+        
+    def get_market_overview(self) -> Dict[str, Any]:
+        """Get comprehensive market data overview"""
+```
+
+##### FileAnalyzer
+Advanced file analysis and data quality assessment.
+
+```python
+class FileAnalyzer:
+    def analyze_file(self, file_path: Path) -> FileAnalysisResult:
+        """Analyze individual CSV file for data quality"""
+        
+    def batch_analyze(self, file_paths: List[Path]) -> List[FileAnalysisResult]:
+        """Batch analyze multiple files with progress tracking"""
+        
+    def get_quality_summary(self) -> Dict[str, int]:
+        """Get summary of data quality across all files"""
+```
+
+##### DataSourceManager
+Multi-source data collection with intelligent fallback.
+
+```python
+class DataSourceManager:
+    def __init__(self, config: Config):
+        """Initialize with multiple data sources"""
+        
+    def get_stock_data(self, symbol: str, exchange: str) -> Optional[pd.DataFrame]:
+        """Get stock data with automatic source fallback"""
+        
+    def test_all_sources(self) -> Dict[str, bool]:
+        """Test connectivity to all data sources"""
+```
+
+### EPDHuobiUpdater.py - HTX Crypto Data Collector v5.0
+
+#### Core Classes
+
+##### HighSpeedDataCollector
+Main class for high-performance cryptocurrency data collection.
+
+```python
+class HighSpeedDataCollector:
+    def __init__(self, config: Config):
+        """Initialize high-speed collector with parallel processing"""
+        
+    def collect_all_usdt_pairs(self) -> Dict[str, Any]:
+        """Collect data for all USDT trading pairs"""
+        
+    def collect_symbol_data(self, symbol: str, interval: str) -> bool:
+        """Collect data for specific symbol and interval"""
+        
+    def get_available_symbols(self) -> List[str]:
+        """Get list of available trading symbols"""
+        
+    def get_collection_stats(self) -> Dict[str, Any]:
+        """Get statistics about data collection progress"""
+```
+
+##### HTXAPIClient
+HTX API client with authentication and rate limiting.
+
+```python
+class HTXAPIClient:
+    def __init__(self, config: Config):
+        """Initialize HTX client with API credentials"""
+        
+    def get_klines(self, symbol: str, interval: str, size: int = 1000) -> List[Dict]:
+        """Get candlestick data with authentication"""
+        
+    def get_all_symbols(self) -> List[Dict]:
+        """Get all available trading symbols"""
+        
+    def test_connection(self) -> bool:
+        """Test API connection and authentication"""
+```
+
+##### CCXTDataCollector
+Multi-exchange data collector using CCXT library.
+
+```python
+class CCXTDataCollector:
+    def __init__(self, config: Config):
+        """Initialize with multiple exchange support"""
+        
+    def collect_from_multiple_exchanges(self, symbol: str) -> Dict[str, pd.DataFrame]:
+        """Collect data from multiple exchanges for comparison"""
+        
+    def get_supported_exchanges(self) -> List[str]:
+        """Get list of supported exchanges"""
+```
+
+#### Configuration Classes
+
+##### Config (EPDStocksUpdater)
+Production-ready configuration for Chinese stock data collection.
+
+```python
+@dataclass
+class Config:
+    base_dir: str = "Chinese_Market"
+    data_dir: str = ""
+    enable_organized_structure: bool = True
+    max_concurrent_downloads: int = 5
+    enable_circuit_breaker: bool = True
+    max_retries: int = 3
+    retry_delay_base: float = 1.0
+    
+    def get_stock_file_path(self, symbol: str, exchange: str) -> Path:
+        """Get organized file path for stock symbol"""
+```
+
+##### Config (EPDHuobiUpdater)
+High-performance configuration for cryptocurrency data collection.
+
+```python
+@dataclass
+class Config:
+    htx_access_key: str = ""
+    htx_secret_key: str = ""
+    base_dir: str = "Market_Data"
+    enable_crypto: bool = True
+    crypto_intervals: List[str] = field(default_factory=list)
+    min_volume_threshold: int = 10000
+    
+    def load_from_file(self, config_file: str = "htx_config.json"):
+        """Load configuration from JSON file"""
+```
+
+### Usage Examples
+
+#### Basic Data Collection Pipeline
+```python
+# Chinese stocks
+stock_config = Config(enable_organized_structure=True)
+stock_manager = ChineseStockManager(stock_config)
+stock_results = stock_manager.update_all_stocks()
+
+# Cryptocurrency
+crypto_config = Config()
+crypto_config.load_from_file("htx_config.json")
+crypto_collector = HighSpeedDataCollector(crypto_config)
+crypto_results = crypto_collector.collect_all_usdt_pairs()
+
+# Pattern analysis
+orchestrator = ProfessionalTradingOrchestrator()
+analysis_results = orchestrator.run_analysis()
+```
+
 ---
 
 **This API reference provides comprehensive documentation for extending and using the Early Pump Detection System. For additional examples and tutorials, see the other documentation files.**
