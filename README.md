@@ -78,8 +78,28 @@ Early-Pump-Detection-System/
 ├── 📄 README.md                    # Comprehensive project overview and documentation
 ├── 📦 requirements.txt             # Python dependencies and package requirements
 ├── 🐍 main.py                      # Main system orchestrator and entry point
+│   ├── detect_m1_optimization()   # Apple Silicon performance optimization detection
+│   ├── main()                     # Main entry point with interactive menu
+│   ├── ProfessionalTradingOrchestrator  # Main coordination class
+│   ├── ComponentRegistry          # Auto-discovery component registry
+│   ├── EnhancedBlacklistManager   # Dynamic blacklist management
+│   └── ProfessionalLearningSystem # Advanced pattern learning system
 ├── 🎭 demo.py                      # Demonstration script and system overview
+│   ├── show_system_overview()     # Display system capabilities and features
+│   ├── show_project_structure()   # Show project file structure
+│   ├── show_quick_start()         # Display quick start instructions
+│   ├── show_grading_system()      # Show professional grading system
+│   ├── show_system_requirements() # Display system requirements
+│   ├── show_available_documentation() # Check documentation status
+│   ├── show_next_steps()          # Show recommended next steps
+│   └── main()                     # Demo script entry point
 ├── 🧪 validate_setup.py            # System validation and setup verification
+│   ├── test_project_structure()   # Validate required files and directories
+│   ├── test_documentation()       # Validate documentation completeness
+│   ├── test_python_syntax()       # Validate Python file syntax
+│   ├── test_requirements()        # Validate requirements.txt content
+│   ├── test_readme_content()      # Validate README completeness
+│   └── run_validation()           # Execute all validation tests
 ├── 🚫 .gitignore                   # Git ignore patterns for clean repository
 ├── 📚 docs/                        # Comprehensive documentation
 │   ├── 📖 installation.md          # Detailed installation and setup guide
@@ -88,16 +108,57 @@ Early-Pump-Detection-System/
 │   └── 📋 api-reference.md         # API documentation and component reference
 ├── 🔧 pattern_analyzers/           # High-level pattern analysis components
 │   ├── __init__.py                 # Package initialization and auto-discovery
+│   │   └── auto_discover_pattern_analyzers() # Auto-discovery function
 │   ├── base_pattern_analyzer.py    # Abstract base class for pattern analyzers
+│   │   ├── BasePatternAnalyzer    # Base class for all pattern analyzers
+│   │   ├── analyze_symbol()       # Core symbol analysis method
+│   │   ├── run_analysis()         # Batch analysis execution
+│   │   ├── load_data()            # Data loading and validation
+│   │   ├── calculate_basic_metrics() # Technical indicator calculations
+│   │   ├── print_results()        # Formatted result display
+│   │   └── save_results()         # Result persistence
 │   └── professional_pattern_analyzer.py  # Enhanced analyzer with v6.1 features
+│       ├── ProfessionalPatternAnalyzer # Advanced pattern analysis class
+│       ├── EnhancedBlacklistManager    # Dynamic blacklist management
+│       ├── ProfessionalLearningSystem  # ML-inspired pattern learning
+│       └── _initialize_auto_discovered_components() # Component initialization
 ├── 🔍 pattern_detectors/           # Core pattern detection algorithms
 │   ├── __init__.py                 # Package initialization and auto-discovery
+│   │   └── auto_discover_detectors() # Auto-discovery function
 │   ├── base_detector.py            # Abstract base class for pattern detectors
+│   │   ├── BasePatternDetector    # Base class for all detectors
+│   │   ├── detect_patterns()      # Main pattern detection method
+│   │   ├── get_supported_patterns() # List supported pattern types
+│   │   ├── detect_specific_pattern() # Single pattern detection
+│   │   └── calculate_technical_indicators() # Technical analysis tools
 │   └── advanced_pattern_detector.py # 20+ sophisticated detection algorithms
+│       ├── AdvancedPatternDetector # Advanced pattern detection class
+│       ├── detect_hidden_accumulation() # Smart money flow detection
+│       ├── detect_smart_money_flow()    # Institutional activity detection
+│       ├── detect_whale_accumulation()  # Large holder analysis
+│       ├── detect_coiled_spring()       # Breakout preparation detection
+│       ├── detect_momentum_vacuum()     # Momentum gap analysis
+│       ├── detect_fibonacci_retracement() # Fibonacci level analysis
+│       └── detect_elliott_wave_3()      # Elliott Wave pattern detection
 ├── 📊 stage_analyzers/             # Multi-stage market analysis pipeline
 │   ├── __init__.py                 # Package initialization and auto-discovery
+│   │   └── auto_discover_stage_analyzers() # Auto-discovery function
 │   ├── base_stage_analyzer.py      # Abstract base class for stage analysis
+│   │   ├── BaseStageAnalyzer      # Base class for all stage analyzers
+│   │   ├── run_all_stages()       # Execute complete stage analysis
+│   │   ├── run_specific_stage()   # Single stage execution
+│   │   ├── calculate_support_resistance() # Support/resistance calculation
+│   │   ├── calculate_volatility_metrics() # Volatility analysis
+│   │   └── calculate_momentum_indicators() # Momentum indicator calculation
 │   └── enhanced_stage_analyzer.py  # Advanced multi-stage analysis system
+│       ├── EnhancedStageAnalyzer  # Enhanced stage analysis class
+│       ├── stage_1_smart_money_detection() # Smart money flow analysis
+│       ├── stage_2_accumulation_analysis() # Accumulation pattern analysis
+│       ├── stage_3_technical_confluence()  # Technical indicator confluence
+│       ├── stage_4_volume_profiling()      # Volume profile analysis
+│       ├── stage_5_momentum_analysis()     # Momentum and trend analysis
+│       ├── stage_6_pattern_recognition()   # Advanced pattern recognition
+│       └── stage_7_risk_assessment()       # Risk evaluation and scoring
 ├── 🧪 tests/                       # Testing infrastructure and test cases
 │   └── test_system.py              # System integration and component tests
 ├── 📝 examples/                    # Usage examples and sample implementations
@@ -106,22 +167,44 @@ Early-Pump-Detection-System/
 └── 📋 CHANGELOG.md                 # Version history and release notes
 ```
 
-### 🗂️ Directory Descriptions
+### 🗂️ File and Function Details
 
 #### Core System Files
 - **`main.py`**: Central orchestrator implementing the ProfessionalTradingOrchestrator with auto-discovery
-- **`demo.py`**: Interactive demonstration showcasing system capabilities without full dependencies
+  - **Key Functions**: `detect_m1_optimization()`, `main()` - Main entry and M1 optimization
+  - **Key Classes**: `ProfessionalTradingOrchestrator`, `ComponentRegistry`, `EnhancedBlacklistManager`, `ProfessionalLearningSystem`
+- **`demo.py`**: Interactive demonstration showcasing system capabilities without full dependencies  
+  - **Key Functions**: `show_system_overview()`, `show_project_structure()`, `show_quick_start()`, `show_grading_system()`
 - **`validate_setup.py`**: Comprehensive validation script for system setup verification
+  - **Key Functions**: `test_project_structure()`, `test_documentation()`, `test_python_syntax()`, `run_validation()`
 
 #### Analysis Components (Auto-Discovery Architecture)
-- **`pattern_analyzers/`**: High-level pattern analysis and coordination layer
-- **`pattern_detectors/`**: Core pattern detection with 20+ sophisticated algorithms
-- **`stage_analyzers/`**: Multi-stage market analysis (accumulation, markup, distribution, decline)
+
+##### Pattern Analyzers (`pattern_analyzers/`)
+- **Base Classes**: `BasePatternAnalyzer` - Core interface for all pattern analyzers
+  - **Core Methods**: `analyze_symbol()`, `run_analysis()`, `load_data()`, `calculate_basic_metrics()`, `print_results()`, `save_results()`
+- **Professional Implementation**: `ProfessionalPatternAnalyzer` - Enhanced v6.1 analyzer with auto-discovery
+  - **Advanced Features**: Component initialization, blacklist management, learning system integration
+- **Auto-Discovery**: `auto_discover_pattern_analyzers()` - Dynamic component loading
+
+##### Pattern Detectors (`pattern_detectors/`)
+- **Base Classes**: `BasePatternDetector` - Core interface for pattern detection algorithms
+  - **Core Methods**: `detect_patterns()`, `get_supported_patterns()`, `detect_specific_pattern()`
+- **Advanced Implementation**: `AdvancedPatternDetector` - 20+ sophisticated detection algorithms
+  - **Pattern Detection**: `detect_hidden_accumulation()`, `detect_smart_money_flow()`, `detect_whale_accumulation()`, `detect_coiled_spring()`, `detect_momentum_vacuum()`, `detect_fibonacci_retracement()`, `detect_elliott_wave_3()`
+- **Auto-Discovery**: `auto_discover_detectors()` - Dynamic detector loading
+
+##### Stage Analyzers (`stage_analyzers/`)
+- **Base Classes**: `BaseStageAnalyzer` - Core interface for multi-stage analysis
+  - **Core Methods**: `run_all_stages()`, `calculate_support_resistance()`, `calculate_volatility_metrics()`, `calculate_momentum_indicators()`
+- **Enhanced Implementation**: `EnhancedStageAnalyzer` - Advanced 7-stage analysis pipeline
+  - **Stage Analysis**: `stage_1_smart_money_detection()`, `stage_2_accumulation_analysis()`, `stage_3_technical_confluence()`, `stage_4_volume_profiling()`, `stage_5_momentum_analysis()`, `stage_6_pattern_recognition()`, `stage_7_risk_assessment()`
+- **Auto-Discovery**: `auto_discover_stage_analyzers()` - Dynamic stage analyzer loading
 
 #### Documentation & Support
 - **`docs/`**: Complete documentation suite with installation, usage, and architecture guides
-- **`examples/`**: Practical usage examples and integration patterns
-- **`tests/`**: Testing infrastructure for system validation
+- **`examples/`**: Practical usage examples and integration patterns  
+- **`tests/`**: Testing infrastructure for system validation (`test_system.py`)
 
 ### Market Data Structure
 ```
