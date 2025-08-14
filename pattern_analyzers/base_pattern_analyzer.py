@@ -15,10 +15,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Import shared data structures
-class MarketType(Enum):
-    CHINESE_STOCK = "Chinese A-Share"
-    CRYPTO = "Cryptocurrency"
-    BOTH = "Both Markets"
+# Import MarketType from main module to ensure enum consistency
+try:
+    from main import MarketType
+except ImportError:
+    # Fallback for when running as standalone
+    from enum import Enum
+    class MarketType(Enum):
+        CHINESE_STOCK = "Chinese A-Share"
+        CRYPTO = "Cryptocurrency"
+        BOTH = "Both Markets"
 
 class TimeFrame(Enum):
     D1 = 1
