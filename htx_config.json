@@ -1,0 +1,27 @@
+{
+  "htx_access_key": "",
+  "htx_secret_key": "",
+  "base_dir": "Market_Data",
+  "enable_crypto": true,
+  "enable_stocks": true,
+  "crypto_intervals": [
+    "1min",
+    "60min",
+    "1day"
+  ],
+  "stock_intervals": [
+    "1day",
+    "1week"
+  ],
+  "base_currencies": [
+    "USDT",
+    "BTC",
+    "ETH"
+  ],
+  "fetch_klines": true,
+  "fetch_trades": true,
+  "fetch_tickers": true,
+  "fetch_orderbook": false,
+  "enable_websocket": false,
+  "min_volume_threshold": 10000
+}
