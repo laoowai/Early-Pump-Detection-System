@@ -237,7 +237,10 @@ def test_system_resources() -> Tuple[bool, List[str]]:
     warnings = []
     
     import platform
-    import psutil if 'psutil' in sys.modules else None
+    try:
+        import psutil
+    except ImportError:
+        psutil = None
     
     # Python version
     python_version = sys.version_info
@@ -276,7 +279,7 @@ def run_validation() -> Dict[str, Any]:
     """Run all validation tests"""
     results = {}
     
-    print("ðŸ§ª PROFESSIONAL PATTERN ANALYZER - SETUP VALIDATION")
+    print("🧪 PROFESSIONAL PATTERN ANALYZER - SETUP VALIDATION")
     print("=" * 60)
     
     tests = [
@@ -291,13 +294,13 @@ def run_validation() -> Dict[str, Any]:
     all_passed = True
     
     for test_name, test_func in tests:
-        print(f"\nðŸ"§ Testing {test_name}...")
+        print(f"\n🔧 Testing {test_name}...")
         try:
             passed, issues = test_func()
             results[test_name] = {"passed": passed, "issues": issues}
             
             if passed:
-                print(f"   âœ… {test_name}: PASSED")
+                print(f"   ✅ {test_name}: PASSED")
             else:
                 print(f"   âŒ {test_name}: FAILED")
                 all_passed = False
@@ -306,7 +309,7 @@ def run_validation() -> Dict[str, Any]:
                 if issue.startswith("Warning:"):
                     print(f"   âš ï¸  {issue}")
                 else:
-                    print(f"   â€¢ {issue}")
+                    print(f"   • {issue}")
         
         except Exception as e:
             print(f"   âŒ {test_name}: ERROR - {str(e)}")
@@ -315,17 +318,17 @@ def run_validation() -> Dict[str, Any]:
     
     print("\n" + "=" * 60)
     if all_passed:
-        print("ðŸŽ‰ ALL TESTS PASSED! System is ready for analysis.")
-        print("ðŸš€ Run 'python main.py' to start pattern analysis.")
+        print("🎉 ALL TESTS PASSED! System is ready for analysis.")
+        print("🚀 Run 'python main.py' to start pattern analysis.")
     else:
         print("âš ï¸  SOME TESTS FAILED. Please fix issues before running analysis.")
-        print("ðŸ'¡ Check the issues listed above and run validation again.")
+        print("💡 Check the issues listed above and run validation again.")
     
-    print("\nðŸ"§ Quick fixes:")
-    print("   â€¢ Missing files: Re-download project files")
-    print("   â€¢ Missing data: Create Chinese_Market/data/ and add CSV files") 
-    print("   â€¢ Import errors: pip install pandas numpy scipy scikit-learn")
-    print("   â€¢ Format errors: Ensure CSV files have Open,High,Low,Close columns")
+    print("\n🔧 Quick fixes:")
+    print("   • Missing files: Re-download project files")
+    print("   • Missing data: Create Chinese_Market/data/ and add CSV files") 
+    print("   • Import errors: pip install pandas numpy scipy scikit-learn")
+    print("   • Format errors: Ensure CSV files have Open,High,Low,Close columns")
     
     return results
 
@@ -339,7 +342,7 @@ def main():
             import json
             with open("validation_results.json", "w") as f:
                 json.dump(results, f, indent=2)
-            print(f"\nðŸ'¾ Validation results saved to validation_results.json")
+            print(f"\n💾 Validation results saved to validation_results.json")
         except Exception:
             pass
     
