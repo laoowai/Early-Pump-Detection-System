@@ -375,22 +375,27 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
         return list(set(symbols))
     
     def analyze_symbol(self, symbol: str, market_type: MarketType) -> Optional[MultiTimeframeAnalysis]:
-        """Analyze a single symbol with comprehensive analysis"""
+        """Analyze a single symbol with comprehensive analysis and detailed failure tracking"""
+        failure_reason = None  # Track failure reason for diagnostics
+        
         try:
             is_crypto = market_type == MarketType.CRYPTO
             
             # Blacklist check
             check_symbol = symbol.replace('_USDT', '') if '_USDT' in symbol else symbol
             if self.blacklist_manager.is_blacklisted(check_symbol, market_type):
+                failure_reason = "blacklisted"
                 return None
             
             df = self.load_data(symbol, market_type)
             if df is None:
+                failure_reason = "data_loading_failed"
                 return None
             
             # Enhanced minimum data requirements
             min_len = 60 if is_crypto else 120
             if len(df) < min_len:
+                failure_reason = f"insufficient_data_{len(df)}_need_{min_len}"
                 return None
             
             # Run enhanced stage analysis if available
@@ -400,16 +405,22 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
                 # Fallback basic analysis
                 stage_results = self._basic_stage_analysis(df, symbol, is_crypto)
             
+            if not stage_results:
+                failure_reason = "stage_analysis_failed"
+                return None
+            
             # Enhanced filtering - MORE AGGRESSIVE FOR BETTER PERFORMANCE
             passed_stages = sum(1 for r in stage_results if r.passed)
             avg_stage_score = np.mean([r.score for r in stage_results])
             
             # IMPROVED: More lenient filtering
             if passed_stages < (2 if is_crypto else 3):  # Reduced from 3/4
+                failure_reason = f"low_passed_stages_{passed_stages}_need_{2 if is_crypto else 3}"
                 return None
             
             # IMPROVED: Also accept high average scores even with fewer passed stages
             if avg_stage_score < (45 if is_crypto else 40):  # More lenient
+                failure_reason = f"low_avg_score_{avg_stage_score:.1f}_need_{45 if is_crypto else 40}"
                 return None
             
             # Multi-timeframe pattern analysis
@@ -447,6 +458,7 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
             # Ensure minimum pattern requirements
             total_patterns = sum(len(patterns) for patterns in timeframe_patterns.values())
             if total_patterns < (2 if is_crypto else 3):
+                failure_reason = f"insufficient_patterns_{total_patterns}_need_{2 if is_crypto else 3}"
                 return None
             
             # Enhanced scoring - IMPROVED CONFIDENCE CALCULATION
@@ -481,6 +493,9 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
             # Enhanced technical indicators
             technical_indicators = self._calculate_technical_indicators(df, is_crypto)
             
+            # SUCCESS - record success for diagnostics
+            failure_reason = "success"
+            
             return MultiTimeframeAnalysis(
                 symbol=symbol,
                 market_type=market_type,
@@ -501,8 +516,18 @@ class ProfessionalPatternAnalyzer(BasePatternAnalyzer):
             )
             
         except Exception as e:
+            failure_reason = f"exception_{str(e)[:30]}"
             logger.debug(f"Error analyzing {symbol}: {e}")
             return None
+        finally:
+            # Track failure reason for diagnostics
+            if not hasattr(self, 'failure_tracker'):
+                self.failure_tracker = {}
+            
+            if failure_reason not in self.failure_tracker:
+                self.failure_tracker[failure_reason] = []
+            
+            self.failure_tracker[failure_reason].append(symbol)
     
     def run_analysis(self, market_type: MarketType = MarketType.BOTH,
                      max_symbols: int = None, num_processes: int = None) -> List[MultiTimeframeAnalysis]:
