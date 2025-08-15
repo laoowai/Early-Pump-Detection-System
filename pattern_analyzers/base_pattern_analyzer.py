@@ -377,7 +377,7 @@ class BasePatternAnalyzer(ABC):
                     logger.debug(f"Error reading CSV without date parsing {file_path}: {e2}")
                     return None
             
-            # Enhanced column standardization
+            # Enhanced column standardization - CRITICAL FIX for crypto data
             column_mapping = {}
             for col in df.columns:
                 col_lower = col.lower().strip()
@@ -392,16 +392,51 @@ class BasePatternAnalyzer(ABC):
                 elif col_lower in ['volume', '成交量', 'vol', 'volume_quote']:
                     column_mapping[col] = 'Volume'
             
-            df = df.rename(columns=column_mapping)
+            # Apply column mapping
+            if column_mapping:
+                df = df.rename(columns=column_mapping)
+                logger.debug(f"Column mapping applied for {symbol}: {column_mapping}")
             
-            # Check for required columns
+            # CRITICAL FIX: Ensure required columns exist after mapping
             required_columns = ['Open', 'High', 'Low', 'Close']
             missing_columns = [col for col in required_columns if col not in df.columns]
             
             if missing_columns:
-                logger.debug(f"Missing required columns for {symbol}: {missing_columns}")
-                logger.debug(f"Available columns: {list(df.columns)}")
-                return None
+                logger.debug(f"Missing required columns for {symbol} after mapping: {missing_columns}")
+                logger.debug(f"Available columns after mapping: {list(df.columns)}")
+                logger.debug(f"Original columns: {list(pd.read_csv(file_path, nrows=0).columns)}")
+                
+                # Try alternative column detection for crypto data
+                if market_type == MarketType.CRYPTO:
+                    logger.debug(f"Attempting crypto-specific column detection for {symbol}")
+                    
+                    # Re-read original data to try alternative mapping
+                    df_orig = pd.read_csv(file_path, index_col=0) if file_path else df
+                    crypto_mapping = {}
+                    
+                    for col in df_orig.columns:
+                        col_clean = col.lower().strip()
+                        if col_clean == 'open' and 'Open' not in df.columns:
+                            crypto_mapping[col] = 'Open'
+                        elif col_clean == 'high' and 'High' not in df.columns:
+                            crypto_mapping[col] = 'High'
+                        elif col_clean == 'low' and 'Low' not in df.columns:
+                            crypto_mapping[col] = 'Low'
+                        elif col_clean == 'close' and 'Close' not in df.columns:
+                            crypto_mapping[col] = 'Close'
+                        elif col_clean in ['volume', 'vol'] and 'Volume' not in df.columns:
+                            crypto_mapping[col] = 'Volume'
+                    
+                    if crypto_mapping:
+                        df = df_orig.rename(columns=crypto_mapping)
+                        logger.debug(f"Applied crypto-specific mapping for {symbol}: {crypto_mapping}")
+                        
+                        # Re-check missing columns
+                        missing_columns = [col for col in required_columns if col not in df.columns]
+                
+                if missing_columns:
+                    logger.debug(f"Still missing columns for {symbol}: {missing_columns}")
+                    return None
             
             # Enhanced data cleaning
             original_length = len(df)
